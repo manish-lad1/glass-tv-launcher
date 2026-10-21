@@ -9,20 +9,32 @@ A custom home screen for the VU TV (Android TV 11, 1920×1080 @ density 320). Bu
 
 - **Phase 3 (done, tested on the TV 21 Oct 2026):** live widgets and their expanded screens.
   - **Weather:** Open-Meteo, Pune, refreshed every 30 min, with Indian AQI (CPCB, from 24-h PM2.5/PM10 means).
-  - **Up next:** Apple iCloud ICS links, with RRULE, EXDATE, RECURRENCE-ID and time zones, via biweekly.
+  - **Up next:** any ICS calendar link (Apple iCloud public calendars, or subscriptions like a Formula 1 feed), with RRULE, EXDATE, RECURRENCE-ID and time zones, via biweekly. Events from 2 weeks back to 5 weeks ahead are loaded. Long titles wrap to two lines on Home, and if they still don't fit the middle is cut so the end (e.g. "- Practice 1") stays visible.
   - **Now watching:** a stack you flip with ◀ ▶. OK resumes and hold OK opens details.
   - **Offline:** cached data stays on screen with its age ("Offline · 5 min"), and each calendar shows its own sync error.
-  - **Setup for now:** calendars and the watch list are set up over adb (below) until the phone companion arrives in phase 5.
+  - **Setup:** calendars and the watch list are managed from the phone companion (phase 5), or over adb (see below).
 
 - **Phase 4 (done, tested on the TV 21 Oct 2026):** wallpaper library and Ambient.
-  - **Wallpapers:** three built-in scenes (Dusk Ridge, Blue Hour, Ember Peaks) plus your own photos, stored at 1920×1080 JPEG 85%. Glass cards draw from a pre-blurred copy of the current wallpaper. Home changes wallpaper only quietly, when waking from Ambient or returning to Home.
+  - **Wallpapers:** three built-in scenes (Dusk Ridge, Blue Hour, Ember Peaks) plus your own photos, stored at 1920×1080 JPEG 85%. Glass cards draw from a pre-blurred copy of the current wallpaper. In the rotating modes (daily / every N hours / time of day), Home changes wallpaper only quietly, when waking from Ambient or returning to Home. Picking a wallpaper on the phone or in Quick settings applies straight away.
   - **Ambient:** after 3 min idle on Home. It's a slideshow of the whole library with a slow drift and a 2.5 s crossfade every 40 s, plus the big clock, date and weather, a glass chip with your next event after today, and "Resume <show>" (OK resumes). Any other key wakes it with focus where you left it.
   - **Screensaver:** the same Ambient screen is the system screensaver (`GlassDream`). It starts after the TV's own 10-min timeout, e.g. on a paused video.
-  - **Memory:** about 100 MB PSS on Home and ~150 MB during the slideshow. Slides are freed as they leave the screen.
+  - **Memory (measured in phase 4):** about 100 MB PSS on Home and ~150 MB during the slideshow. Slides are freed as they leave the screen. Not re-measured after phases 5–6.
 
 - **Phase 5 (done, tested on the TV 21 Oct 2026):** phone companion and automatic Now watching (details below).
 
-- **Phase 6 (done, tested on the TV 22 Oct 2026):** Quick settings panel (input switching confirmed on HDMI), dock editing on the TV, and hold-OK in All apps.
+- **Phase 6 (done, tested on the TV 22 Oct 2026):** Quick settings panel (input switching confirmed on HDMI) with an added Wi-Fi section, dock editing on the TV, and hold-OK in All apps.
+
+All six phases in the brief are done.
+
+## Changes from the design
+
+These are deliberate departures from the designs in `design/`, made during the build:
+
+- **Dock:** it spans the full content width (120–1800 px) so the top bar, widgets and dock line up on both sides. Tiles are 124 px tall instead of 104, and filled edge to edge with each app's TV banner (or its icon on the icon's own colour if there's no banner). They're about 194 px wide with 7 apps.
+- **Now watching:** the stack's right edge lines up with the rest of Home. Items behind the front one peek out as 14 px slivers (instead of 30 px).
+- **Eye button:** a new top-bar button (left of the weather chip) hides or shows the widgets to see the wallpaper. The choice is remembered.
+- **Wi-Fi section:** added to Quick settings (not in the design).
+- **Pairing card:** it's larger than the design (1320 × 680 px) so the title and expiry line fit.
 
 ## Quick settings
 
@@ -69,6 +81,8 @@ Or open `http://192.168.1.4:8080` on the phone and type the code.
 To forget every paired phone, run `--es cmd unpair_all` (see below).
 
 **Automatic Now watching** (`MediaWatcher`):
+- The phone's Watching tab has an **Automatic Now watching** card. It lists each app seen playing as "✓ Shares titles" or "✗ Doesn't share titles · add these by hand", and fills in as you watch.
+- Artwork comes from the app when it sends a picture or a picture link. SonyLIV does; JioHotstar doesn't, so its titles get placeholder art unless you add one from the phone.
 - Android shares other apps' media sessions with an approved listener. When an app reports a title and is playing, that title is added to the front of Now watching, marked **Auto** on the phone, and its progress and time left are kept up to date. Notification contents are ignored.
 - Titles shorter than 5 min (trailers, previews, Shorts) are skipped. If no length is reported, a title counts only after 5 min of playing.
 - Finishing a title (95%+) removes it. At most 4 auto titles are kept.
@@ -176,7 +190,7 @@ Logs: `adb -s 192.168.1.4:5555 logcat -s GlassLauncher AndroidRuntime`
 
 ## Remote behaviour
 
-- The screen has three zones, stacked: top bar (weather chip, Wi-Fi, profile), widgets, dock. ◀ ▶ stop at the ends.
+- The screen has three zones, stacked: top bar (eye button, weather chip, Wi-Fi, profile "M"), widgets, dock. ◀ ▶ stop at the ends of the top bar and of the dock.
 - ▲ from the dock goes to the widget directly above the focused tile.
 - On launch, focus lands on the last-used dock app. The same happens on Back and when you return from an app.
 - On Weather or Up next, OK opens the full screen.
@@ -187,7 +201,7 @@ Logs: `adb -s 192.168.1.4:5555 logcat -s GlassLauncher AndroidRuntime`
   - **Netflix** (`KEY_FN_F5`) sends Netflix's own start intent and works on its own.
   - **YouTube** (key 293), **Prime Video** (295) and **Hotstar** (337) normally go to Hisense's handler (`com.hisense.tv.smartsense`), which sends a broadcast that only the stock launcher can receive. With the stock launcher off, they did nothing.
   - **Settings** (`KEYCODE_NOTIFICATION`, 83) also did nothing.
-  - `RemoteKeyService`, an accessibility service with key filtering, now catches those four keys system-wide. It opens the app, or Android Settings for the Settings button.
+  - `RemoteKeyService`, an accessibility service with key filtering, now catches those four keys system-wide. It opens the app, or Quick settings for the Settings button.
 - "M" opens Quick settings; holding OK on "M" goes straight to phone pairing. The Wi-Fi chip opens Wi-Fi settings, and the eye button hides or shows the widgets.
 - The remote's Settings button opens Quick settings.
 
@@ -277,6 +291,16 @@ Uninstalling Glass Launcher while the stock launcher is disabled leaves only `co
 ```bash
 adb -s 192.168.1.4:5555 uninstall com.manishlad.glasslauncher
 ```
+
+## Known limitations
+
+- **Netflix** shares no titles with other apps, so Netflix shows must be added from the phone. **JioHotstar** shares titles but no artwork.
+- **Finished titles disappear:** an automatically added title is removed once it reaches 95%.
+- **Inputs:** Android doesn't tell apps which input is on screen. The blue dot in Quick settings marks the last one picked there.
+- **Wi-Fi:** apps can't switch networks on Android 10+, so choosing a network opens the TV's Wi-Fi settings.
+- **Weather location** is fixed to Pune (`WeatherPlace` in `data/Weather.kt`). Changing it from the phone isn't built.
+- **TMDB artwork lookup** was skipped by choice. Use the phone's "Add artwork" for titles without pictures.
+- **Memory:** RSS (about 180–230 MB) is above the brief's ~150 MB target, partly because RSS includes shared system libraries. PSS is about 100 MB on Home.
 
 ## Notes
 

@@ -2,7 +2,7 @@
 
 A custom home screen (launcher) for Manish's VU TV, replacing the stock Google TV home screen.
 Designed first in a Claude chat on 21 Oct 2026; this brief carries every decision into the build.
-Single user, personal use only. Not for distribution.
+Single user, personal use (the code is published at github.com/manish-lad1/glass-tv-launcher; the app itself is built for this one TV).
 
 - **Designs: `design/` in this folder** — `design/png/` has a screenshot of every screen (look at these), `design/html/` has each screen's source with exact sizes/colours (px at 1920×1080 → ÷2 for dp). See `design/README.md`.
 - Original design canvas (may not be accessible from Claude Code): https://claude.ai/artifact/3iWyvsZj3pcDCmGywyA148
@@ -10,6 +10,24 @@ Single user, personal use only. Not for distribution.
 
 Work in phases (below). Finish and test each phase on the real TV before starting the next.
 Ask Manish before anything that changes the TV's system state (disabling packages, changing settings).
+
+## Build status and decisions since this brief (22 Oct 2026)
+
+**All six phases are done and tested on the TV.** `README.md` is the source of truth for how things work now: features, remote behaviour, adb commands, every system change with its undo, and known limitations. The rest of this file is the original brief; where it disagrees with the list below, the list wins.
+
+- **Package:** `com.manishlad.glasslauncher`.
+- **Libraries chosen:** NanoHTTPD (phone server), biweekly (ICS), OkHttp, ZXing (pairing QR), DataStore for small prefs plus JSON files in app storage. `tv-material` isn't used; every surface is a custom glass draw on Compose foundation.
+- **Home screen role:** `set-home-activity` alone didn't beat the stock launcher, so `launcherx` and `setupwraith` were disabled (with approval). The app theme must not inherit `Theme.DeviceDefault`: on this build it made the activity translucent and the Home key left the previous app on screen.
+- **Remote buttons:** Netflix works on its own. YouTube, Prime Video, Hotstar and Settings broke once the stock launcher was off (Hisense routes them to it), and an accessibility key service (`RemoteKeyService`) now handles them. Settings opens Quick settings.
+- **Now watching reads other apps' playback after all** (reverses §2.5). With Manish's approval, a notification listener (`MediaWatcher`) reads media sessions and auto-adds playing titles (5 min or longer, or 5 min of playing when no length is reported), keeps progress, removes titles at 95%, and keeps at most 4 auto titles. Netflix sends no title; JioHotstar sends no artwork; SonyLIV does. The manual list from the phone still works alongside.
+- **Calendars:** any ICS link works, not only iCloud.
+- **Skipped or deferred:** TMDB artwork lookup (Manish chose phone uploads instead); changing the weather location from the phone; Outlook (§8).
+- **Design changes Manish asked for:**
+  - The dock spans the full width with 124 px banner tiles.
+  - All three Home rows align to 120–1800 px.
+  - Now watching peeks are 14 px.
+  - An eye button hides or shows the widgets.
+  - Quick settings has a Wi-Fi section; it needs the location permission, granted via adb.
 
 ---
 
@@ -27,7 +45,7 @@ Ask Manish before anything that changes the TV's system state (disabling package
 | Stock HOME | `com.google.android.apps.tv.launcherx/.home.HomeActivity` |
 | HOME fallbacks | `com.google.android.tungsten.setupwraith/.RecoveryActivity` (re-enables stock launcher), `com.android.tv.settings/.system.FallbackHome` (priority -1000) |
 | Other vendor launcher | `com.hisense.tv.customerlauncher` — installed but NOT a HOME handler; leave it alone |
-| Screensaver now | `com.google.android.apps.tv.dreamx/.service.Backdrop`, screen off after 10 min |
+| Screensaver | Originally `com.google.android.apps.tv.dreamx/.service.Backdrop`; now Glass Launcher's `GlassDream` (phase 4). Screen off after 10 min |
 | Window blur | Not supported (API 30, `ro.surface_flinger.supports_background_blur` empty) |
 
 ### Installed apps (dock / grid use these)
@@ -47,9 +65,9 @@ Hisense exposes standard TvInputService IDs:
 - Antenna → `com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW0` (also HW8)
 Switch with `Intent(ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(inputId))`; read the list via TvInputManager rather than hard-coding.
 
-### Not yet tested
-- What the remote's Netflix / YouTube buttons send, and whether they still work once the stock launcher is disabled (on Chromecast the YouTube button breaks). Test interactively with `adb shell getevent -l` during phase 2.
-- Whether `pm set-home-activity` works on this build (try it before disabling packages).
+### Tested in phase 2 (originally "not yet tested")
+- Remote buttons: Netflix (`KEY_FN_F5`) keeps working. YouTube (293), Prime Video (295), Hotstar (337) and Settings (83) stopped working with the stock launcher disabled and are now handled by `RemoteKeyService` (see README).
+- `cmd package set-home-activity` reported success but the stock launcher still won, so it was disabled.
 
 ---
 
@@ -59,20 +77,20 @@ Switch with `Intent(ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(i
 2. **1080p, not 4K.** Store wallpapers at 1920×1080 JPEG (~85%). A decoded 4K ARGB bitmap is ~33 MB; 1080p is ~8 MB. Target the launcher under ~150 MB RSS.
 3. **Light animation.** Animate transform/alpha only. Avoid many large soft shadows animating at once. Ambient drift (slow pan/zoom) is fine at 1080p.
 4. **Third-party app limits.** Picture mode, backlight, sound output, sleep timer = vendor/system only → shortcuts that open the TV's own settings, not controls. Find the vendor picture-settings activity (look in `com.vt.tv.commonui`, `com.hisense.*`, `com.android.tv.settings`) with `cmd package query-activities`; fall back to `Settings.ACTION_SETTINGS`. Bluetooth: `Settings.ACTION_BLUETOOTH_SETTINGS`.
-5. **No reading other apps' playback.** "Now watching" is a list Manish maintains (from the phone companion). Resume = open that app (deep link to the title if the app supports one; otherwise just launch the app).
+5. **Reading other apps' playback (updated).** Originally Now watching was only a list Manish maintains. It now also reads media sessions through an approved notification listener (see the status section above). Resume still just opens the app (or the title's deep link, if one is set).
 
 ---
 
 ## 3. Tech choices (suggested — adjust if there's a good reason, but say why)
 
-- Kotlin, Jetpack Compose + `androidx.tv:tv-material` / `tv-foundation`. minSdk 30, compile/target current stable.
+- Kotlin, Jetpack Compose (foundation only; `tv-material` turned out unnecessary). minSdk 30, compile/target 35.
 - Single activity for Home with HOME + DEFAULT + LEANBACK_LAUNCHER intent filters.
 - Screensaver: a `DreamService` (permission `android.permission.BIND_DREAM_SERVICE`) — reuse the Ambient UI.
 - Persistence: DataStore (prefs) + files in app storage for wallpapers. No cloud backend.
 - Networking: OkHttp. ICS parsing: a library that handles RRULE recurrences and time zones (e.g. ical4j or biweekly) — don't hand-roll recurrence.
 - Phone companion server: small embedded HTTP server (NanoHTTPD or Ktor CIO) on port 8080, LAN only.
 - Font: Inter, bundled (no network fonts).
-- Package name: ask Manish (placeholder `com.manishlad.glasslauncher`).
+- Package name: `com.manishlad.glasslauncher` (confirmed by Manish).
 - Toolchain on the Mac (arm64, Homebrew available): JDK 17 + Android command-line tools + platform-tools. Build with Gradle from the terminal; Android Studio not required.
 
 ---
@@ -99,7 +117,7 @@ Dock (bottom, centred glass bar): Netflix, Prime Video, YouTube, JioHotstar, Son
 
 **All apps** — heavy blur overlay, "Apps · 15 apps", 6-column grid, labels under tiles, "Hold OK to add to dock".
 **Dock edit** — hold OK on a dock app: widgets hide, tiles wiggle (±1.5°) with remove badges, moving tile lifts with ◀ ▶ chevrons, dashed "+" slot; hint bar: ◀ ▶ Move · OK Drop · ▼ Remove · Back Done.
-**Quick settings** — right side panel: profile header; Input row (Home, HDMI 1–3, AV, Antenna) — real switching; Wallpaper picker (ours); "TV settings — opens the TV's own menus": Picture & brightness ›, Sound & Bluetooth ›, Sleep timer ›, All settings ›.
+**Quick settings** — right side panel: profile header; Input row (Home, HDMI 1–3, AV, Antenna) — real switching; Wallpaper picker (ours); "TV settings — opens the TV's own menus": Picture & brightness ›, Sound & Bluetooth ›, Sleep timer ›, All settings ›. Added during the build: a Wi-Fi section (nearby networks, connected one first; choosing one opens the TV's Wi-Fi settings) and "Pair a phone".
 **Ambient / screensaver** — wallpaper slideshow with slow drift + crossfade, big clock (220 px, weight 200), date + weather line, glass chips: tomorrow's first event, "Resume <show>". Wallpaper name/credit top-right. Used both as idle-on-Home and as the system screensaver (DreamService).
 **Expanded Weather** — "Right now" panel (temp 168 px, condition, feels-like/H/L, humidity, wind, **Indian AQI**, rain %, sunrise, sunset, attribution line), Next 12 hours strip, 6-day list with range bars + rain %.
 **Expanded Calendar** — week strip with event dots, "Rest of today" (empty-state copy: "Nothing else today. You're free until <event>, tomorrow at <time>."), calendars legend + "Synced N min ago", selected day's agenda. View-only.
@@ -119,7 +137,7 @@ Dock (bottom, centred glass bar): Netflix, Prime Video, YouTube, JioHotstar, Son
 ## 6. Data sources
 
 **Weather — Open-Meteo** (free, no key, non-commercial, 10k calls/day; CC BY 4.0 → show "Weather data by Open-Meteo.com").
-- Location fixed: Pune, 18.5204 N, 73.8567 E, timezone Asia/Kolkata (editable later from phone).
+- Location fixed: Pune, 18.5204 N, 73.8567 E, timezone Asia/Kolkata (making it editable from the phone isn't built yet).
 - Forecast API: current, hourly (12 h), daily (6 days incl. sunrise/sunset, precip probability).
 - Air Quality API: hourly pm2_5 and pm10. **Show Indian AQI (CPCB)**: use 24-h rolling means; sub-index by linear interpolation; AQI = max(sub-indices).
   - PM2.5 µg/m³: 0–30→0–50, 31–60→51–100, 61–90→101–200, 91–120→201–300, 121–250→301–400, >250→401–500
@@ -127,12 +145,12 @@ Dock (bottom, centred glass bar): Netflix, Prime Video, YouTube, JioHotstar, Son
   - Categories: Good, Satisfactory, Moderate, Poor, Very Poor, Severe. Label it "Indian AQI"; note it's a model forecast.
 - Refresh every 30 min; cache last result; always show age ("updated N min ago"); never go blank offline.
 
-**Calendar — Apple iCloud public calendar links only** (Outlook deferred, see §8).
+**Calendar — ICS links** (Apple iCloud public calendars are the main source; any ICS subscription works. Outlook deferred, see §8).
 - Manish pastes one or more `webcal://…icloud.com/published/…` links on the phone (convert to https). Each has a name + colour.
 - Refresh every 30 min; merge all; show sync age; per-calendar error state ("Couldn't sync · link may have been reset").
 - Links are secrets: store only on the TV, never log them.
 
-**Now watching** — local list edited from the phone: title, app (package), "up to" (S/E or film), optional time left, order. Front two shown on Home. Artwork: let Manish upload an image, or (later) look up a backdrop from TMDB (free non-commercial API with attribution).
+**Now watching** — local list edited from the phone: title, app (package), "up to" (S/E or film), optional time left, order. On Home the front item fills the card, with up to two more peeking behind it. Artwork: uploaded from the phone, or taken automatically from apps that send it with their media session. TMDB lookup was considered and skipped.
 
 **Wallpapers** — Manish's own photos uploaded from the phone (primary); optional Unsplash collection later (needs API key; follow their attribution + hotlinking + download-tracking guidelines). No Apple aerials / scraped wallpapers. Modes: fixed, rotate daily / every N hours, time-of-day sets. On Home, change only quietly (e.g. on wake). Slideshow lives in Ambient.
 
