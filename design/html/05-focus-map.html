@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Focus map</title>
+
+</head>
+<body>
+<div class="x-dc">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.w{position:absolute;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:18px}
+.z{position:absolute;border:2px dashed #7fd1ff;border-radius:24px}
+.b{position:absolute;width:40px;height:40px;border-radius:999px;background:#7fd1ff;color:#0e0c22;font-size:20px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.ar{position:absolute;font-size:16px;font-weight:600;color:#0e0c22;background:#ffd27a;border-radius:999px;padding:6px 12px;white-space:nowrap}
+.k{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:baseline}
+.kk{font-size:18px;font-weight:600;color:#0e0c22;background:rgba(255,255,255,.9);border-radius:10px;padding:6px 10px;text-align:center}
+.kv{font-size:20px;line-height:1.4;color:rgba(255,255,255,.88)}
+</style>
+
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: #0e0c22; font-family: Inter, system-ui, sans-serif; color: #ffffff">
+
+<div style="position: absolute; left: 80px; top: 72px; display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 44px; font-weight: 500; letter-spacing: -.5px">Focus map</h1>
+<span style="font-size: 22px; color: rgba(255,255,255,.75)">Three zones, stacked. Focus only ever moves between neighbours — no diagonal jumps.</span>
+</div>
+
+<div style="position: absolute; left: 80px; top: 220px; width: 1200px; height: 675px; border-radius: 28px; overflow: hidden; background: #1c2856">
+<svg aria-hidden="true" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><linearGradient id="skyf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1026"></stop><stop offset=".42" stop-color="#1c2856"></stop><stop offset=".66" stop-color="#5a447a"></stop><stop offset=".84" stop-color="#d48a6c"></stop><stop offset="1" stop-color="#f0b07a"></stop></linearGradient></defs>
+<rect width="1920" height="1080" fill="url(#skyf)"></rect>
+<path d="M0 770 L240 668 L420 742 L640 642 L860 762 L1080 692 L1300 772 L1520 682 L1740 762 L1920 702 L1920 900 L0 900Z" fill="#2a2350"></path>
+<path d="M0 890 L300 802 L560 862 L820 782 L1100 872 L1400 802 L1700 882 L1920 832 L1920 1080 L0 1080Z" fill="#14102b"></path>
+</svg>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(6,6,20,.35)"></div>
+
+<div class="w" style="left: 75px; top: 45px; width: 210px; height: 96px; background: transparent; border-color: transparent; font-size: 72px; font-weight: 200; letter-spacing: -3px; line-height: 96px">9:41</div>
+<div class="w" style="left: 900px; top: 50px; width: 130px; height: 44px; border-radius: 999px"></div>
+<div class="w" style="left: 1045px; top: 50px; width: 44px; height: 44px; border-radius: 999px"></div>
+<div class="w" style="left: 1100px; top: 50px; width: 44px; height: 44px; border-radius: 999px; background: rgba(255,255,255,.35)"></div>
+
+<div class="w" style="left: 75px; top: 215px; width: 250px; height: 190px; border-radius: 24px"></div>
+<div class="w" style="left: 345px; top: 215px; width: 288px; height: 190px; border-radius: 24px"></div>
+<div class="w" style="left: 653px; top: 215px; width: 472px; height: 190px; border-radius: 24px"></div>
+
+<div class="w" style="left: 225px; top: 505px; width: 750px; height: 92px; border-radius: 30px"></div>
+<div style="position: absolute; left: 243px; top: 517px; display: flex; gap: 14px">
+<div style="width: 110px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.55); box-shadow: 0 0 0 4px #ffffff"></div>
+<div style="width: 110px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.18)"></div>
+<div style="width: 110px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.18)"></div>
+<div style="width: 110px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.18)"></div>
+<div style="width: 110px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.18)"></div>
+<div style="width: 68px; height: 68px; border-radius: 18px; background: rgba(255,255,255,.18)"></div>
+</div>
+
+<div class="z" style="left: 880px; top: 36px; width: 280px; height: 70px"></div>
+<div class="b" style="left: 1170px; top: 50px">1</div>
+<div class="z" style="left: 60px; top: 200px; width: 1080px; height: 220px"></div>
+<div class="b" style="left: 1150px; top: 290px">2</div>
+<div class="z" style="left: 210px; top: 490px; width: 780px; height: 122px"></div>
+<div class="b" style="left: 1000px; top: 530px">3</div>
+
+<div class="ar" style="left: 560px; top: 440px">▲ Up · ▼ Down</div>
+<div class="ar" style="left: 940px; top: 140px">▲ Up · ▼ Down</div>
+<div class="ar" style="left: 243px; top: 620px">Launch focus · last-used app</div>
+</div>
+
+<div style="position: absolute; left: 1360px; top: 220px; width: 480px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 18px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #7fd1ff">Zones</span>
+<div style="display: flex; gap: 14px; align-items: baseline"><span style="font-size: 22px; font-weight: 600; color: #7fd1ff">1</span><span class="kv"><b style="color: #fff">Top bar.</b> Weather chip, Wi-Fi, profile. Profile opens Quick settings.</span></div>
+<div style="display: flex; gap: 14px; align-items: baseline"><span style="font-size: 22px; font-weight: 600; color: #7fd1ff">2</span><span class="kv"><b style="color: #fff">Widgets.</b> Each is focusable. OK expands it full screen (hourly forecast, full agenda, watch list).</span></div>
+<div style="display: flex; gap: 14px; align-items: baseline"><span style="font-size: 22px; font-weight: 600; color: #7fd1ff">3</span><span class="kv"><b style="color: #fff">Dock.</b> Home base. Focus returns here after any app closes.</span></div>
+</div>
+<div style="height: 1px; background: rgba(255,255,255,.16)"></div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 18px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #ffd27a">Remote keys</span>
+<div class="k"><span class="kk">◀ ▶</span><span class="kv">Move within a zone. Stops at the ends with a soft bump, no wrap.</span></div>
+<div class="k"><span class="kk">▲ from dock</span><span class="kv">Goes to the widget sitting above the focused app.</span></div>
+<div class="k"><span class="kk">Hold OK</span><span class="kv">On a dock app: enter edit mode.</span></div>
+<div class="k"><span class="kk">Back</span><span class="kv">Returns focus to the dock. Hold 5 s: open Android Settings (recovery).</span></div>
+<div class="k"><span class="kk">Idle 3 min</span><span class="kv">Fades to Ambient. Any key wakes it with focus exactly where it was.</span></div>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

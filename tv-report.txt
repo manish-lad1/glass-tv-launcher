@@ -1,0 +1,239 @@
+TV check report  Wed Oct 21 02:33:23 IST 2026
+
+===== Model / build =====
+ro.product.manufacturer = Hisense
+ro.product.model = VU TV FFM
+ro.product.device = songshan
+ro.build.version.release = 11
+ro.build.version.sdk = 30
+ro.build.version.security_patch = 2026-04-01
+ro.board.platform = m7632
+ro.hardware = m7632
+ro.build.fingerprint = VU/songshan_emV_FFM/songshan:11/RTT2.220118.001/01.02.05.04:user/release-keys
+
+===== CPU =====
+Hardware	: m7632
+4
+
+===== UI resolution + density =====
+Physical size: 1920x1080
+Physical density: 320
+
+===== Display modes =====
+  DisplayDeviceInfo{"Built-in Screen": uniqueId="local:0", 1920 x 1080, modeId 1, defaultModeId 1, supportedModes [{id=1, width=1920, height=1080, fps=60.000004}, {id=2, width=1920, height=1080, fps=50.0}], colorMode 0, supportedColorModes [0], HdrCapabilities HdrCapabilities{mSupportedHdrTypes=[1, 2, 3, 4], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, allmSupported true, gameContentTypeSupported false, density 320, 44.0 x 44.0 dpi, appVsyncOff 1000000, presDeadline 16666666, touch INTERNAL, rotation 0, type INTERNAL, address {port=0}, deviceProductInfo null, state ON, FLAG_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS}
+    mBaseDisplayInfo=DisplayInfo{"Built-in Screen", displayId 0, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, real 1920 x 1080, largest app 1920 x 1080, smallest app 1920 x 1080, appVsyncOff 1000000, presDeadline 16666666, mode 1, defaultMode 1, modes [{id=1, width=1920, height=1080, fps=60.000004}, {id=2, width=1920, height=1080, fps=50.0}], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[1, 2, 3, 4], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, minimalPostProcessingSupported true, rotation 0, state ON, type INTERNAL, uniqueId "local:0", app 1920 x 1080, density 320 (44.0 x 44.0) dpi, layerStack 0, colorMode 0, supportedColorModes [0], address {port=0}, deviceProductInfo null, removeMode 0}
+
+===== Memory =====
+MemTotal:        1831784 kB
+MemFree:          117216 kB
+MemAvailable:     621712 kB
+
+===== Storage =====
+Filesystem       Size  Used Avail Use% Mounted on
+/dev/block/dm-17 6.7G  3.8G  2.7G  59% /data/user/0
+
+===== GPU =====
+GLES: ARM, Mali-G52, OpenGL ES 3.2 v1.r25p1-01bet0.Bifrost-20230915.eef899f
+
+===== Blur support =====
+sf blur prop = 
+
+===== Current HOME handler =====
+priority=2 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+com.google.android.apps.tv.launcherx/.home.HomeActivity
+
+===== All HOME apps =====
+3 activities found:
+  Activity #0:
+    priority=2 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.google.android.apps.tv.launcherx/.home.HomeActivity
+  Activity #1:
+    priority=1 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.google.android.tungsten.setupwraith/.RecoveryActivity
+  Activity #2:
+    priority=-1000 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.android.tv.settings/.system.FallbackHome
+
+===== Screensaver settings =====
+screensaver_enabled = 1
+screensaver_components = com.google.android.apps.tv.dreamx/.service.Backdrop
+screensaver_activate_on_sleep = 1
+screensaver_activate_on_dock = 1
+sleep_timeout = 86400000
+screen_off_timeout = 600000
+
+===== TV inputs =====
+    com.google.android.videos/.tv.usecase.tvinput.playback.TvInputService: info: TvInputInfo{id=com.google.android.videos/.tv.usecase.tvinput.playback.TvInputService, pkg=com.google.android.videos, service=com.google.android.videos.tv.usecase.tvinput.playback.TvInputService}; state: 0
+    com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW0: info: TvInputInfo{id=com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW0, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.tuner.TunerTvInputService}; state: 0
+    com.google.android.videos/com.google.android.apps.play.movies.tv.usecase.tvinput.playback.VideoPreviewInputService: info: TvInputInfo{id=com.google.android.videos/com.google.android.apps.play.movies.tv.usecase.tvinput.playback.VideoPreviewInputService, pkg=com.google.android.videos, service=com.google.android.apps.play.movies.tv.usecase.tvinput.playback.VideoPreviewInputService}; state: 0
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW5: info: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW5, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}; state: 1
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW6: info: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW6, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}; state: 1
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW4: info: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW4, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}; state: 1
+    com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW8: info: TvInputInfo{id=com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW8, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.tuner.TunerTvInputService}; state: 0
+    com.graymatrix.did/com.zee5.androidtv.pmr.live.TvInputService: info: TvInputInfo{id=com.graymatrix.did/com.zee5.androidtv.pmr.live.TvInputService, pkg=com.graymatrix.did, service=com.zee5.androidtv.pmr.live.TvInputService}; state: 0
+    com.hisense.tv.hitvinput/.composite.CompositeTvInputService/HW1: info: TvInputInfo{id=com.hisense.tv.hitvinput/.composite.CompositeTvInputService/HW1, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.composite.CompositeTvInputService}; state: 2
+    0: Connection{ mHardwareInfo: TvInputHardwareInfo {id=0, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    1: Connection{ mHardwareInfo: TvInputHardwareInfo {id=1, type=3, audio_type=-2147450880, audio_addr=, cable_connection_status=2}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    4: Connection{ mHardwareInfo: TvInputHardwareInfo {id=4, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=1, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    5: Connection{ mHardwareInfo: TvInputHardwareInfo {id=5, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=2, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    6: Connection{ mHardwareInfo: TvInputHardwareInfo {id=6, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=3, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    8: Connection{ mHardwareInfo: TvInputHardwareInfo {id=8, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    9: Connection{ mHardwareInfo: TvInputHardwareInfo {id=9, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    10: Connection{ mHardwareInfo: TvInputHardwareInfo {id=10, type=3, audio_type=-2147450880, audio_addr=, cable_connection_status=2}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    13: Connection{ mHardwareInfo: TvInputHardwareInfo {id=13, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=1, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    14: Connection{ mHardwareInfo: TvInputHardwareInfo {id=14, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=2, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    15: Connection{ mHardwareInfo: TvInputHardwareInfo {id=15, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=3, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    17: Connection{ mHardwareInfo: TvInputHardwareInfo {id=17, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}, mInfo: null, mCallback: null, mConfigs: [TvStreamConfig {mStreamId=0;mType=1;mGeneration=0}, TvStreamConfig {mStreamId=1;mType=1;mGeneration=0}], mCallingUid: null, mResolvedUserId: null, mResourceClientProfile: null }
+    TvInputHardwareInfo {id=0, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}
+    TvInputHardwareInfo {id=1, type=3, audio_type=-2147450880, audio_addr=, cable_connection_status=2}
+    TvInputHardwareInfo {id=4, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=1, cable_connection_status=1}
+    TvInputHardwareInfo {id=5, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=2, cable_connection_status=1}
+    TvInputHardwareInfo {id=6, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=3, cable_connection_status=1}
+    TvInputHardwareInfo {id=8, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}
+    TvInputHardwareInfo {id=9, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}
+    TvInputHardwareInfo {id=10, type=3, audio_type=-2147450880, audio_addr=, cable_connection_status=2}
+    TvInputHardwareInfo {id=13, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=1, cable_connection_status=1}
+    TvInputHardwareInfo {id=14, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=2, cable_connection_status=1}
+    TvInputHardwareInfo {id=15, type=9, audio_type=-2147483616, audio_addr=, hdmi_port=3, cable_connection_status=1}
+    TvInputHardwareInfo {id=17, type=2, audio_type=-2147467264, audio_addr=, cable_connection_status=1}
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW4: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW4, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW5: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW5, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}
+    com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW6: TvInputInfo{id=com.hisense.tv.hitvinput/.hdmi.HdmiTvInputService/HW6, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.hdmi.HdmiTvInputService}
+    com.hisense.tv.hitvinput/.composite.CompositeTvInputService/HW1: TvInputInfo{id=com.hisense.tv.hitvinput/.composite.CompositeTvInputService/HW1, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.composite.CompositeTvInputService}
+    com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW0: TvInputInfo{id=com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW0, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.tuner.TunerTvInputService}
+    com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW8: TvInputInfo{id=com.hisense.tv.hitvinput/.tuner.TunerTvInputService/HW8, pkg=com.hisense.tv.hitvinput, service=com.hisense.tv.hitvinput.tuner.TunerTvInputService}
+
+===== Launcher-related packages =====
+package:com.google.android.apps.tv.launcherx
+package:com.google.android.katniss
+package:com.google.android.tungsten.setupwraith
+package:com.hisense.tv.customerlauncher
+
+===== All packages =====
+package:android
+package:android.auto_generated_rro_product__
+package:android.auto_generated_rro_vendor__
+package:android.autoinstalls.config.google.gtvpai
+package:com.amazon.amazonvideo.livingroom
+package:com.android.backupconfirm
+package:com.android.bluetooth
+package:com.android.bluetooth.auto_generated_rro_product__
+package:com.android.bluetooth.auto_generated_rro_vendor__
+package:com.android.captiveportallogin
+package:com.android.certinstaller
+package:com.android.companiondevicemanager
+package:com.android.cts.ctsshim
+package:com.android.cts.priv.ctsshim
+package:com.android.dreams.basic
+package:com.android.dynsystem
+package:com.android.externalstorage
+package:com.android.hotspot2.osulogin
+package:com.android.htmlviewer
+package:com.android.inputdevices
+package:com.android.keychain
+package:com.android.localtransport
+package:com.android.location.fused
+package:com.android.networkstack.inprocess
+package:com.android.networkstack.permissionconfig
+package:com.android.networkstack.tethering.inprocess
+package:com.android.networkstack.tethering.inprocess.rro
+package:com.android.networkstack.tethering.rro
+package:com.android.pacprocessor
+package:com.android.printspooler
+package:com.android.providers.calendar
+package:com.android.providers.contacts
+package:com.android.providers.contacts.auto_generated_rro_product__
+package:com.android.providers.downloads
+package:com.android.providers.media
+package:com.android.providers.media.module
+package:com.android.providers.settings
+package:com.android.providers.settings.auto_generated_rro_product__
+package:com.android.providers.settings.auto_generated_rro_vendor__
+package:com.android.providers.tv
+package:com.android.providers.userdictionary
+package:com.android.proxyhandler
+package:com.android.se
+package:com.android.settings.intelligence
+package:com.android.sharedstoragebackup
+package:com.android.shell
+package:com.android.soundpicker
+package:com.android.statementservice
+package:com.android.systemui
+package:com.android.tv.settings
+package:com.android.tv.settings.google.resoverlay
+package:com.android.tv.settings.vendor.resoverlay
+package:com.android.vending
+package:com.android.vpndialogs
+package:com.android.wallpaperbackup
+package:com.android.wifi.resources
+package:com.android.wifi.resources.rro
+package:com.apple.atve.androidtv.appletv
+package:com.dolby.android.audio.service
+package:com.fancode.tv
+package:com.formulaone.production
+package:com.google.android.apps.mediashell
+package:com.google.android.apps.nbu.smartconnect.tv
+package:com.google.android.apps.tv.dreamx
+package:com.google.android.apps.tv.launcherx
+package:com.google.android.ext.services
+package:com.google.android.ext.shared
+package:com.google.android.feedback
+package:com.google.android.gms
+package:com.google.android.gsf
+package:com.google.android.inputmethod.latin
+package:com.google.android.katniss
+package:com.google.android.marvin.talkback
+package:com.google.android.modulemetadata
+package:com.google.android.onetimeinitializer
+package:com.google.android.overlay.modules.ext.services
+package:com.google.android.overlay.modules.modulemetadata.forframework
+package:com.google.android.overlay.modules.permissioncontroller
+package:com.google.android.overlay.modules.permissioncontroller.forframework
+package:com.google.android.packageinstaller
+package:com.google.android.partnersetup
+package:com.google.android.permissioncontroller
+package:com.google.android.play.games
+package:com.google.android.sss.authbridge
+package:com.google.android.syncadapters.calendar
+package:com.google.android.tts
+package:com.google.android.tungsten.setupwraith
+package:com.google.android.tv.assistant
+package:com.google.android.tv.frameworkpackagestubs
+package:com.google.android.tv.remote.service
+package:com.google.android.videos
+package:com.google.android.webview
+package:com.google.android.youtube.tv
+package:com.google.android.youtube.tvmusic
+package:com.graymatrix.did
+package:com.hisense.fte
+package:com.hisense.hibrowser
+package:com.hisense.remoteupgrade
+package:com.hisense.storemode
+package:com.hisense.tv.customerlauncher
+package:com.hisense.tv.dlna
+package:com.hisense.tv.hitvinput
+package:com.hisense.tv.ota
+package:com.hisense.tv.protector
+package:com.hisense.tv.smartsense
+package:com.hisense.tv.smartservice
+package:com.hisense.udpserver
+package:com.hisense.uifac
+package:com.iqqijni.tv1.keyboard
+package:com.mediatek.autopair
+package:com.mediatek.network
+package:com.mediatek.tv.service
+package:com.mediatek.wwtv.tvcenter
+package:com.mstar.android.tv.disclaimercustomization
+package:com.netflix.ninja
+package:com.sonyliv
+package:com.vt.audio_update_service
+package:com.vt.eula
+package:com.vt.miracast
+package:com.vt.tv.aiot
+package:com.vt.tv.commonui
+package:com.vt.tv.input
+package:com.vt.tv.mediacenter
+package:com.vt.tv.smartsense.ui
+package:com.vt.tv.usbota
+package:fusion.android.tv.demo
+package:in.startv.hotstar

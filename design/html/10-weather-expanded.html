@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Weather expanded</title>
+
+</head>
+<body>
+<div class="x-dc">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.g{position:relative;overflow:hidden;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(36px) saturate(170%);backdrop-filter:blur(36px) saturate(170%);border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),0 24px 60px rgba(8,6,24,.35)}
+.g::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 42%);pointer-events:none}
+.h{font-size:20px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.dl{font-size:20px;color:rgba(255,255,255,.75)}
+.dv{font-size:30px;font-weight:500}
+.hc{display:flex;flex-direction:column;align-items:center;gap:12px}
+.ht{font-size:19px;color:rgba(255,255,255,.75)}
+.hv{font-size:26px;font-weight:500}
+.dr{display:grid;grid-template-columns:110px 70px minmax(0,1fr) 120px;gap:20px;align-items:center;font-size:24px}
+.tr{height:8px;border-radius:999px;background:rgba(255,255,255,.16);position:relative}
+.bar{position:absolute;top:0;height:8px;border-radius:999px;background:linear-gradient(90deg,#9fd8ff,#ffcf8a)}
+</style>
+
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: #0b1026; font-family: Inter, system-ui, sans-serif; color: #ffffff">
+<svg aria-hidden="true" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><linearGradient id="skyw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1026"></stop><stop offset=".42" stop-color="#1c2856"></stop><stop offset=".66" stop-color="#5a447a"></stop><stop offset=".84" stop-color="#d48a6c"></stop><stop offset="1" stop-color="#f0b07a"></stop></linearGradient></defs>
+<rect width="1920" height="1080" fill="url(#skyw)"></rect>
+<path d="M0 700 L180 612 L320 662 L520 540 L700 640 L880 580 L1060 650 L1240 560 L1420 640 L1600 590 L1780 650 L1920 610 L1920 860 L0 860Z" fill="#4a3f6e" opacity=".85"></path>
+<path d="M0 770 L240 668 L420 742 L640 642 L860 762 L1080 692 L1300 772 L1520 682 L1740 762 L1920 702 L1920 900 L0 900Z" fill="#2a2350"></path>
+<path d="M0 890 L300 802 L560 862 L820 782 L1100 872 L1400 802 L1700 882 L1920 832 L1920 1080 L0 1080Z" fill="#14102b"></path>
+</svg>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(10,10,32,.4); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px)"></div>
+
+<div style="position: absolute; inset: 0; box-sizing: border-box; padding: 72px 120px; display: flex; flex-direction: column; gap: 40px">
+<header style="display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 8px"><h1 style="margin: 0; font-size: 56px; font-weight: 300; letter-spacing: -1px">Weather</h1><span style="font-size: 22px; color: rgba(255,255,255,.78)">Pune · updated 3 min ago</span></div>
+<div class="g" style="border-radius: 999px; padding: 12px 24px; font-size: 22px">Back to Home</div>
+</header>
+
+<div style="display: grid; grid-template-columns: 620px minmax(0, 1fr); gap: 32px; flex: 1; min-height: 0">
+<section class="g" aria-label="Right now" style="border-radius: 40px; padding: 44px; display: flex; flex-direction: column; gap: 30px">
+<span class="h">Right now</span>
+<div style="display: flex; align-items: center; gap: 28px">
+<svg aria-hidden="true" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+<span style="font-size: 168px; font-weight: 200; letter-spacing: -8px; line-height: 1">24°</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 34px; font-weight: 500">Clear night</span><span style="font-size: 24px; color: rgba(255,255,255,.8)">Feels like 25° · H 31° · L 19°</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.16)">
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Humidity</span><span class="dv">58%</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Wind</span><span class="dv">9 km/h W</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Air quality (Indian AQI)</span><span class="dv">92 · Satisfactory</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Rain</span><span class="dv">0%</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Sunrise</span><span class="dv">6:31 AM</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="dl">Sunset</span><span class="dv">6:07 PM</span></div>
+</div>
+<span style="margin-top: auto; font-size: 18px; line-height: 1.4; color: rgba(255,255,255,.7)">Weather data by Open-Meteo.com (CC BY 4.0). Air quality is a model forecast, converted to the Indian AQI scale.</span>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 32px; min-width: 0">
+<section class="g" aria-label="Next 12 hours" style="border-radius: 40px; padding: 34px 40px; display: flex; flex-direction: column; gap: 24px">
+<span class="h">Next 12 hours</span>
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px">
+<div class="hc" style="background: rgba(255,255,255,.16); border-radius: 18px; padding: 12px 0"><span class="ht" style="color: #fff; font-weight: 600">Now</span><span class="hv">24°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">11 PM</span><span class="hv">22°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">12 AM</span><span class="hv">21°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">1 AM</span><span class="hv">21°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">2 AM</span><span class="hv">20°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">3 AM</span><span class="hv">20°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">4 AM</span><span class="hv">19°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">5 AM</span><span class="hv">19°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">6 AM</span><span class="hv">19°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">7 AM</span><span class="hv">21°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">8 AM</span><span class="hv">24°</span></div>
+<div class="hc" style="padding: 12px 0"><span class="ht">9 AM</span><span class="hv">26°</span></div>
+</div>
+</section>
+
+<section class="g" aria-label="This week" style="border-radius: 40px; padding: 34px 40px; display: flex; flex-direction: column; gap: 18px; flex: 1">
+<div class="dr" style="font-size: 18px; color: rgba(255,255,255,.75); font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase"><span>This week</span><span>Rain</span><span></span><span style="text-align: right">Low · High</span></div>
+<div class="dr"><span style="font-weight: 600">Today</span><span style="color: rgba(255,255,255,.75)">0%</span><div class="tr"><div class="bar" style="left: 12%; width: 70%"></div></div><span style="text-align: right">19° · 31°</span></div>
+<div class="dr"><span>Thu</span><span style="color: rgba(255,255,255,.75)">0%</span><div class="tr"><div class="bar" style="left: 18%; width: 70%"></div></div><span style="text-align: right">20° · 32°</span></div>
+<div class="dr"><span>Fri</span><span style="color: #9fd8ff">40%</span><div class="tr"><div class="bar" style="left: 18%; width: 59%"></div></div><span style="text-align: right">20° · 30°</span></div>
+<div class="dr"><span>Sat</span><span style="color: #9fd8ff">60%</span><div class="tr"><div class="bar" style="left: 24%; width: 47%"></div></div><span style="text-align: right">21° · 29°</span></div>
+<div class="dr"><span>Sun</span><span style="color: rgba(255,255,255,.75)">10%</span><div class="tr"><div class="bar" style="left: 18%; width: 59%"></div></div><span style="text-align: right">20° · 30°</span></div>
+<div class="dr"><span>Mon</span><span style="color: rgba(255,255,255,.75)">0%</span><div class="tr"><div class="bar" style="left: 12%; width: 70%"></div></div><span style="text-align: right">19° · 31°</span></div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

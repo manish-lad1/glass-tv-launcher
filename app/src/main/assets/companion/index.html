@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12102a">
+<title>Glass Launcher</title>
+<style>
+:root{--bg:#12102a;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.14);--dim:rgba(255,255,255,.75);--faint:rgba(255,255,255,.55);--ok:#9ef0c2;--warn:#ffc27a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{padding:calc(20px + env(safe-area-inset-top)) 20px 14px;display:flex;justify-content:space-between;align-items:center;max-width:560px;margin:0 auto}
+header .t1{font-size:13px;color:var(--dim)}
+header .t2{font-size:20px;font-weight:600}
+.pill{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 10px;border-radius:999px;background:rgba(110,220,160,.16);color:var(--ok)}
+.pill i{width:7px;height:7px;border-radius:999px;background:#6edca0;display:block}
+.pill.off{background:rgba(255,255,255,.1);color:var(--dim)}
+.pill.off i{background:var(--faint)}
+main{padding:4px 20px 0;display:flex;flex-direction:column;gap:16px;max-width:560px;margin:0 auto}
+h1{margin:0;font-size:28px;font-weight:600;letter-spacing:-.5px}
+h2{margin:0;font-size:17px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px}
+form.card,.pad{padding:16px;display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:6px}
+.lb{font-size:13px;font-weight:500;color:var(--dim)}
+.in{font:inherit;font-size:16px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:11px 12px;width:100%;-webkit-appearance:none;appearance:none}
+select.in{background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+.in::placeholder{color:var(--faint)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+button{font:inherit;cursor:pointer;color:inherit}
+.primary{border:0;border-radius:12px;padding:13px;font-size:16px;font-weight:600;background:#fff;color:#16132e}
+.primary:disabled{opacity:.5}
+.ghost{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;padding:10px 14px;font-size:15px;font-weight:500}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px}
+.row+.row{border-top:1px solid rgba(255,255,255,.1)}
+.thumb{width:64px;height:40px;border-radius:8px;flex:none;background:#24345e;object-fit:cover;display:block}
+.grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.name{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub{font-size:12px;color:var(--dim)}
+.bar{height:3px;border-radius:999px;background:rgba(255,255,255,.2)}
+.bar div{height:3px;border-radius:999px;background:#fff}
+.more{background:none;border:0;font-size:20px;padding:8px;line-height:1}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 6px;border-radius:6px;background:rgba(127,209,255,.18);color:#7fd1ff;margin-left:6px;vertical-align:2px}
+.note{font-size:12px;color:var(--dim);text-align:center;line-height:1.5}
+.help{font-size:13px;color:var(--dim);line-height:1.45;margin:0}
+.empty{padding:18px 16px;font-size:14px;color:var(--dim);text-align:center}
+.dot{width:12px;height:12px;border-radius:999px;flex:none}
+.err{color:var(--warn)}
+.swatches{display:flex;gap:8px;align-items:center}
+.sw{width:34px;height:34px;border-radius:999px;border:0;padding:0;outline:2px solid transparent;outline-offset:2px}
+.sw.on{outline-color:#fff}
+.icon-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:10px;width:36px;height:36px;font-size:16px;display:flex;align-items:center;justify-content:center}
+.icon-btn:disabled{opacity:.3}
+.walls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wall{background:none;border:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:6px}
+.wall img{width:100%;aspect-ratio:16/9;border-radius:12px;object-fit:cover;display:block;background:#24345e;border:1px solid var(--line)}
+.wall.on img{outline:2px solid #fff;outline-offset:2px}
+.wall span{font-size:13px;font-weight:500}
+.wall small{font-size:11px;color:var(--dim);font-weight:400}
+.seg{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;flex-direction:row;align-items:center;gap:10px;font-size:15px}
+.opt input{width:18px;height:18px;accent-color:#fff;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 10px;font-size:13px}
+.chip.on{background:#fff;color:#16132e;border-color:#fff}
+nav{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;background:rgba(18,16,42,.94);border-top:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:500;color:rgba(255,255,255,.6);background:none;border:0;padding:6px 0;min-width:64px}
+.tab.on{color:#fff}
+.tab svg{width:22px;height:22px}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{width:100%;max-width:560px;background:#1d1a3d;border-radius:20px 20px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;max-height:85vh;overflow:auto}
+.sheet .ttl{font-size:15px;font-weight:600;padding:4px 4px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet .act{text-align:left;background:rgba(255,255,255,.06);border:0;border-radius:12px;padding:14px;font-size:16px}
+.sheet .act.danger{color:#ff9e9e}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));background:#fff;color:#16132e;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;z-index:20;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast.bad{background:#ffcfcf}
+.code{font-size:32px;letter-spacing:12px;text-align:center;font-weight:600}
+input[type=range]{width:100%;accent-color:#fff}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;flex-direction:column;gap:2px"><span class="t1">Glass Launcher</span><span class="t2" id="tvName">Living room TV</span></div>
+  <span class="pill off" id="status"><i></i><span>Connecting</span></span>
+</header>
+<main id="main"></main>
+<nav id="nav" class="hidden">
+  <button class="tab" data-tab="watching"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 8.5v5l4-2.5z"/></svg>Watching</button>
+  <button class="tab" data-tab="dock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="14" width="5" height="5" rx="1.2"/><rect x="9.5" y="14" width="5" height="5" rx="1.2"/><rect x="16" y="14" width="5" height="5" rx="1.2"/></svg>Dock</button>
+  <button class="tab" data-tab="wallpapers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 16l5-4.5 4 3.5 3-2.5 6 4.5"/></svg>Wallpapers</button>
+  <button class="tab" data-tab="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Calendar</button>
+</nav>
+<input type="file" id="file" accept="image/*" class="hidden">
+<script>
+"use strict";
+let S = null;            // last /api/state
+let tab = localStorage.getItem("tab") || "watching";
+const main = document.getElementById("main");
+
+// ---- tiny DOM helper: text is always set as text, never HTML ----
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "class") el.className = v;
+    else if (k === "style") el.style.cssText = v;
+    else if (v === true) el.setAttribute(k, "");
+    else el.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c));
+  return el;
+}
+
+async function api(method, path, body, raw) {
+  const headers = { "X-Glass": "1" };
+  if (raw) headers["Content-Type"] = raw.type || "application/octet-stream";
+  else if (body) headers["Content-Type"] = "application/json";
+  let r;
+  try {
+    r = await fetch(path, { method, headers, credentials: "same-origin", body: raw || (body ? JSON.stringify(body) : undefined) });
+  } catch (e) {
+    setStatus(false);
+    throw new Error("Can't reach the TV. Is your phone on the home Wi-Fi?");
+  }
+  if (r.status === 401) { S = null; render(); throw new Error("Not paired"); }
+  const data = r.headers.get("content-type")?.includes("json") ? await r.json() : {};
+  if (!r.ok) throw new Error(data.error || "The TV said no (" + r.status + ").");
+  return data;
+}
+
+function toast(msg, bad) {
+  const t = h("div", { class: "toast" + (bad ? " bad" : "") }, msg);
+  document.body.append(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+async function act(fn, okMsg) {
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  try { await fn(); if (okMsg) toast(okMsg); await load(); }
+  catch (e) { if (e.message !== "Not paired") toast(e.message, true); }
+}
+
+function setStatus(on) {
+  const p = document.getElementById("status");
+  p.className = "pill" + (on ? "" : " off");
+  p.lastChild.textContent = on ? "Connected" : (S === null ? "Not paired" : "Offline");
+}
+
+async function load() {
+  try {
+    const r = await fetch("/api/state", { credentials: "same-origin", headers: { "X-Glass": "1" } });
+    if (r.status === 401) { S = null; setStatus(false); render(); return; }
+    S = await r.json();
+    setStatus(true);
+    document.getElementById("tvName").textContent = S.tvName;
+  } catch (e) { setStatus(false); }
+  render();
+}
+
+function ago(ms) {
+  if (!ms) return "";
+  const m = Math.max(0, Math.round((Date.now() - ms) / 60000));
+  if (m < 1) return "just now";
+  if (m < 60) return m + " min ago";
+  if (m < 48 * 60) return Math.round(m / 60) + " h ago";
+  return Math.round(m / 1440) + " d ago";
+}
+
+function sheet(title, actions) {
+  const bg = h("div", { class: "sheet-bg", onclick: (e) => { if (e.target === bg) bg.remove(); } });
+  const close = () => bg.remove();
+  bg.append(h("div", { class: "sheet" },
+    h("div", { class: "ttl" }, title),
+    actions.filter(Boolean).map(([label, fn, cls]) => h("button", { class: "act " + (cls || ""), onclick: () => { close(); fn(); } }, label)),
+    h("button", { class: "act", style: "text-align:center", onclick: close }, "Cancel")));
+  document.body.append(bg);
+}
+
+function formSheet(title, fields, onSave) {
+  const bg = h("div", { class: "sheet-bg", onclick: (e) => { if (e.target === bg) bg.remove(); } });
+  const form = h("form", { class: "sheet", onsubmit: async (e) => { e.preventDefault(); bg.remove(); await onSave(); } },
+    h("div", { class: "ttl" }, title), fields,
+    h("button", { class: "primary", type: "submit" }, "Save"),
+    h("button", { class: "act", type: "button", style: "text-align:center", onclick: () => bg.remove() }, "Cancel"));
+  bg.append(form);
+  document.body.append(bg);
+}
+
+/** Pick an image and downscale it on the phone (also turns HEIC into JPEG). */
+function pickImage(maxW, maxH) {
+  return new Promise((resolve) => {
+    const input = document.getElementById("file");
+    input.value = "";
+    input.onchange = async () => {
+      const f = input.files[0];
+      if (!f) return resolve(null);
+      try {
+        const bmp = await createImageBitmap(f, { imageOrientation: "from-image" });
+        const scale = Math.min(1, Math.max(maxW / bmp.width, maxH / bmp.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+        c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+        c.toBlob((b) => resolve({ blob: b || f, name: f.name }), "image/jpeg", 0.9);
+      } catch (e) { resolve({ blob: f, name: f.name }); }
+    };
+    input.click();
+  });
+}
+
+function appOptions(selected) {
+  return S.apps.map((a) => h("option", { value: a.package, selected: a.package === selected }, a.label));
+}
+
+// ---- Pairing ----
+function renderPair() {
+  const fromQr = (location.hash.match(/code=(\d{4})/) || [])[1] || "";
+  const code = h("input", { class: "in code", inputmode: "numeric", maxlength: "4", placeholder: "• • • •", value: fromQr, autocomplete: "one-time-code" });
+  const msg = h("p", { class: "help" }, "On the TV, hold OK on the M button (top right) to show a code.");
+  main.replaceChildren(
+    h("h1", {}, "Pair with your TV"),
+    h("form", { class: "card", onsubmit: async (e) => {
+      e.preventDefault();
+      try {
+        await api("POST", "/api/pair", { code: code.value });
+        history.replaceState(null, "", "/");
+        await load();
+      } catch (err) { msg.textContent = err.message; msg.className = "help err"; }
+    } },
+      h("div", { class: "pad" }, msg, h("label", {}, h("span", { class: "lb" }, "Code shown on the TV"), code),
+        h("button", { class: "primary", type: "submit" }, "Pair"))),
+    h("p", { class: "note" }, "Works only on your home Wi-Fi. You'll only need to do this once on this phone."));
+  if (fromQr) code.focus();
+}
+
+// ---- Watching ----
+function renderWatching() {
+  const title = h("input", { class: "in", placeholder: "Show or film", required: true, maxlength: "120" });
+  const appSel = h("select", { class: "in" }, appOptions(S.dock[0]));
+  const upTo = h("input", { class: "in", placeholder: "S1 E1", maxlength: "40" });
+  const list = S.watching;
+  const rows = list.map((w, i) => {
+    const sub = [w.app, w.upTo, w.timeLeft].filter(Boolean).join(" · ");
+    const img = w.hasArtwork ? h("img", { class: "thumb", src: `/api/watching/${encodeURIComponent(w.id)}/artwork?v=${w.updatedAt}`, alt: "" }) : h("div", { class: "thumb", style: `background:${["#24345e","#6b4058","#2f5a4c"][i % 3]}` });
+    return h("div", { class: "row" }, img,
+      h("div", { class: "grow" },
+        h("span", { class: "name" }, w.title, w.auto ? h("span", { class: "badge" }, "Auto") : null),
+        h("span", { class: "sub" }, sub || "—"),
+        w.progress != null ? h("div", { class: "bar" }, h("div", { style: `width:${Math.round(w.progress * 100)}%` })) : null),
+      h("button", { class: "more", "aria-label": "Options for " + w.title, onclick: () => watchingMenu(w, i) }, "⋯"));
+  });
+  main.replaceChildren(
+    h("h1", {}, "Now watching"),
+    h("form", { class: "card pad", onsubmit: (e) => { e.preventDefault(); act(() => api("POST", "/api/watching", { title: title.value, package: appSel.value, upTo: upTo.value }), "Added to the TV"); } },
+      h("label", {}, h("span", { class: "lb" }, "Title"), title),
+      h("div", { class: "grid2" }, h("label", {}, h("span", { class: "lb" }, "Opens in"), appSel), h("label", {}, h("span", { class: "lb" }, "Up to"), upTo)),
+      h("button", { class: "primary", type: "submit" }, "Add to TV")),
+    h("div", { class: "card" }, rows.length ? rows : h("div", { class: "empty" }, "Nothing in your list yet.")),
+    h("span", { class: "note" }, "The first one is in front on the TV. Use ⋯ to edit, reorder or add artwork."),
+    S.autoTracking ? mediaAppsCard() : h("span", { class: "note" }, "Automatic tracking is off on the TV."));
+}
+
+/** Which apps share what's playing (filled in as you watch). */
+function mediaAppsCard() {
+  const apps = S.mediaApps || [];
+  const rows = apps.map((a) => h("div", { class: "row" },
+    h("img", { class: "thumb", src: `/api/apps/${encodeURIComponent(a.package)}/art`, alt: "", style: "width:48px;height:30px" }),
+    h("div", { class: "grow" },
+      h("span", { class: "name" }, a.app),
+      a.shares
+        ? h("span", { class: "sub", style: "color:var(--ok)" }, "✓ Shares titles")
+        : h("span", { class: "sub err" }, "✗ Doesn't share titles · add these by hand")),
+    h("span", { class: "sub" }, ago(a.lastSeen))));
+  return h("div", { class: "card" },
+    h("div", { class: "pad", style: "padding-bottom:4px" },
+      h("h2", {}, "Automatic Now watching"),
+      h("p", { class: "help" }, "Apps that share what's playing. A title is added to Now watching if it's 5 min or longer (so trailers and Shorts are left out), or once it has played for 5 min if the app doesn't say how long. Titles marked Auto came from this. The list fills in as you watch.")),
+    rows.length ? rows : h("div", { class: "empty" }, "No apps seen playing yet."));
+}
+
+function watchingMenu(w, i) {
+  const ids = S.watching.map((x) => x.id);
+  const move = (d) => { const j = i + d; [ids[i], ids[j]] = [ids[j], ids[i]]; act(() => api("POST", "/api/watching/order", { ids })); };
+  sheet(w.title, [
+    ["Edit", () => editWatching(w)],
+    i > 0 && ["Move to front", () => { ids.splice(i, 1); ids.unshift(w.id); act(() => api("POST", "/api/watching/order", { ids })); }],
+    i > 0 && ["Move up", () => move(-1)],
+    i < ids.length - 1 && ["Move down", () => move(1)],
+    [w.hasArtwork ? "Change artwork" : "Add artwork", async () => {
+      const img = await pickImage(1280, 720);
+      if (img) act(() => api("PUT", `/api/watching/${encodeURIComponent(w.id)}/artwork`, null, img.blob), "Artwork updated");
+    }],
+    ["Mark watched (remove)", () => act(() => api("DELETE", `/api/watching/${encodeURIComponent(w.id)}`), "Removed"), "danger"],
+  ]);
+}
+
+function editWatching(w) {
+  const title = h("input", { class: "in", value: w.title, required: true, maxlength: "120" });
+  const appSel = h("select", { class: "in" }, appOptions(w.package));
+  const upTo = h("input", { class: "in", value: w.upTo, placeholder: "S1 E1 or Film", maxlength: "40" });
+  const left = h("input", { class: "in", value: w.timeLeft, placeholder: "24 min left", maxlength: "40" });
+  const hasP = w.progress != null;
+  const prog = h("input", { type: "range", min: "0", max: "100", value: hasP ? Math.round(w.progress * 100) : 0 });
+  const progLabel = h("span", { class: "lb" }, "Progress · " + (hasP ? prog.value + "%" : "hidden"));
+  let touched = false;
+  prog.oninput = () => { touched = true; progLabel.textContent = "Progress · " + prog.value + "%"; };
+  const link = h("input", { class: "in", value: w.link, placeholder: "Optional deep link", maxlength: "500" });
+  formSheet("Edit", [
+    h("label", {}, h("span", { class: "lb" }, "Title"), title),
+    h("div", { class: "grid2" }, h("label", {}, h("span", { class: "lb" }, "Opens in"), appSel), h("label", {}, h("span", { class: "lb" }, "Up to"), upTo)),
+    h("label", {}, h("span", { class: "lb" }, "Time left"), left),
+    h("label", {}, progLabel, prog),
+    h("label", {}, h("span", { class: "lb" }, "Link (advanced)"), link),
+  ], () => act(() => api("PATCH", `/api/watching/${encodeURIComponent(w.id)}`, {
+    title: title.value, package: appSel.value, upTo: upTo.value, timeLeft: left.value, link: link.value,
+    ...(touched ? { progress: prog.value / 100 } : {}),
+  }), "Saved"));
+}
+
+// ---- Dock ----
+function renderDock() {
+  const labels = Object.fromEntries(S.apps.map((a) => [a.package, a.label]));
+  const dock = S.dock.filter((p) => labels[p]);
+  const save = (next) => act(() => api("PUT", "/api/dock", { packages: next }));
+  const rows = dock.map((p, i) => h("div", { class: "row" },
+    h("img", { class: "thumb", src: `/api/apps/${encodeURIComponent(p)}/art`, alt: "" }),
+    h("div", { class: "grow" }, h("span", { class: "name" }, labels[p])),
+    h("button", { class: "icon-btn", "aria-label": "Move left", disabled: i === 0, onclick: () => { const n = [...dock]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; save(n); } }, "↑"),
+    h("button", { class: "icon-btn", "aria-label": "Move right", disabled: i === dock.length - 1, onclick: () => { const n = [...dock]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; save(n); } }, "↓"),
+    h("button", { class: "icon-btn", "aria-label": "Remove from dock", onclick: () => save(dock.filter((x) => x !== p)) }, "✕")));
+  const others = S.apps.filter((a) => !dock.includes(a.package));
+  const pick = h("select", { class: "in" }, others.map((a) => h("option", { value: a.package }, a.label)));
+  const full = dock.length >= S.dockMax;
+  main.replaceChildren(
+    h("h1", {}, "Dock"),
+    h("div", { class: "card" }, rows.length ? rows : h("div", { class: "empty" }, "The dock is empty.")),
+    h("form", { class: "card pad", onsubmit: (e) => { e.preventDefault(); save([...dock, pick.value]); } },
+      h("label", {}, h("span", { class: "lb" }, full ? `The dock is full (${S.dockMax} apps). Remove one to add another.` : "Add an app"), pick),
+      h("button", { class: "primary", type: "submit", disabled: full || !others.length }, "Add to dock")),
+    h("span", { class: "note" }, "Top of the list is the left end of the dock. Changes show on the TV straight away."));
+}
+
+// ---- Wallpapers ----
+function renderWallpapers() {
+  const m = S.wallpaperMode;
+  const name = h("input", { class: "in", placeholder: "e.g. Goa beach", maxlength: "60" });
+  const useNow = h("input", { type: "checkbox", checked: true });
+  const upload = async (e) => {
+    e.preventDefault();
+    const img = await pickImage(2560, 1440);
+    if (!img) return;
+    const n = name.value.trim() || img.name.replace(/\.[^.]+$/, "");
+    toast("Uploading…");
+    act(() => api("POST", `/api/wallpapers?name=${encodeURIComponent(n)}&use=${useNow.checked}`, null, img.blob), "Added to the TV");
+  };
+  const tiles = S.wallpapers.map((w) => h("button", { class: "wall" + (w.id === S.homeWallpaper ? " on" : ""), onclick: () => wallMenu(w) },
+    h("img", { src: `/api/wallpapers/${encodeURIComponent(w.id)}/thumb`, alt: "", loading: "lazy" }),
+    h("span", {}, w.name, " ", h("small", {}, w.id === S.homeWallpaper ? "· on Home" : w.builtIn ? "· built in" : ""))));
+  const radio = (value, label, extra) => h("label", { class: "opt" },
+    h("input", { type: "radio", name: "mode", checked: m.mode === value, onchange: () => setMode(value) }), label, extra || null);
+  const hours = h("input", { class: "in", type: "number", min: "1", max: "24", value: m.hours || 6, style: "width:72px;padding:6px 8px", onchange: () => setMode("hours") });
+  function setMode(mode) {
+    const body = { mode };
+    if (mode === "fixed") body.id = m.id || S.homeWallpaper;
+    if (mode === "hours") body.hours = parseInt(hours.value, 10) || 6;
+    if (mode === "timeofday") body.sets = m.sets || {};
+    act(() => api("PUT", "/api/wallpapers/mode", body), "Saved");
+  }
+  const parts = [["Morning", "5–12"], ["Afternoon", "12–5"], ["Evening", "5–9"], ["Night", "9–5"]];
+  const todEditor = m.mode === "timeofday" ? h("div", { class: "seg", style: "margin-top:4px" }, parts.map(([part, hrs]) => {
+    const chosen = new Set((m.sets && m.sets[part]) || []);
+    return h("div", { class: "seg" }, h("span", { class: "lb" }, `${part} · ${hrs}` + (chosen.size ? "" : " · any")),
+      h("div", { class: "chips" }, S.wallpapers.map((w) => h("button", { class: "chip" + (chosen.has(w.id) ? " on" : ""), onclick: () => {
+        chosen.has(w.id) ? chosen.delete(w.id) : chosen.add(w.id);
+        const sets = { ...(m.sets || {}), [part]: [...chosen] };
+        act(() => api("PUT", "/api/wallpapers/mode", { mode: "timeofday", sets }));
+      } }, w.name))));
+  })) : null;
+  main.replaceChildren(
+    h("h1", {}, "Wallpapers"),
+    h("form", { class: "card pad", onsubmit: upload },
+      h("h2", {}, "Add a photo"),
+      h("label", {}, h("span", { class: "lb" }, "Name (shown on the screensaver)"), name),
+      h("label", { class: "opt" }, useNow, "Show it on Home now"),
+      h("button", { class: "primary", type: "submit" }, "Choose photo")),
+    h("div", { class: "card pad" },
+      h("h2", {}, "Home wallpaper"),
+      h("div", { class: "seg" },
+        radio("fixed", "Keep the one I pick"),
+        radio("daily", "A different one each day"),
+        radio("hours", "Change every", h("span", { style: "display:flex;align-items:center;gap:8px" }, hours, "hours")),
+        radio("timeofday", "By time of day")),
+      todEditor,
+      h("p", { class: "help" }, "Home changes quietly, when the TV wakes. The screensaver shows them all.")),
+    h("div", { class: "walls" }, tiles));
+}
+
+function wallMenu(w) {
+  sheet(w.name, [
+    ["Show on Home", () => act(() => api("PUT", "/api/wallpapers/mode", { mode: "fixed", id: w.id }), "Showing on Home")],
+    !w.builtIn && ["Remove", () => act(() => api("DELETE", `/api/wallpapers/${encodeURIComponent(w.id)}`), "Removed"), "danger"],
+  ]);
+}
+
+// ---- Calendar ----
+let pickedColor = null;
+function renderCalendar() {
+  const used = new Set(S.calendars.map((c) => c.color));
+  if (!pickedColor) pickedColor = S.colors.find((c) => !used.has(c)) || S.colors[0];
+  const link = h("input", { class: "in", placeholder: "webcal://…icloud.com/published/…", required: true, autocomplete: "off", autocapitalize: "off", spellcheck: "false" });
+  const name = h("input", { class: "in", placeholder: "e.g. Family", maxlength: "40" });
+  const sw = h("div", { class: "swatches" }, S.colors.map((c) => h("button", { type: "button", class: "sw" + (c === pickedColor ? " on" : ""), style: `background:${c}`, "aria-label": "Colour " + c, onclick: () => { pickedColor = c; renderCalendar(); } })));
+  const rows = S.calendars.map((c) => h("div", { class: "row" },
+    h("span", { class: "dot", style: `background:${c.color}` }),
+    h("div", { class: "grow" }, h("span", { class: "name" }, c.name),
+      c.error ? h("span", { class: "sub err" }, c.error) : h("span", { class: "sub" }, c.lastSync ? "Synced " + ago(c.lastSync) : "Syncing…")),
+    h("button", { class: "more", "aria-label": "Options for " + c.name, onclick: () => sheet(c.name, [
+      ["Sync now", () => act(() => api("POST", "/api/calendars/refresh"), "Synced")],
+      ["Remove from TV", () => act(() => api("DELETE", `/api/calendars/${encodeURIComponent(c.id)}`), "Removed"), "danger"],
+    ]) }, "⋯")));
+  main.replaceChildren(
+    h("h1", {}, "Calendars"),
+    h("form", { class: "card pad", onsubmit: (e) => {
+      e.preventDefault();
+      act(() => api("POST", "/api/calendars", { url: link.value, name: name.value, color: pickedColor }), "Added — syncing now");
+      pickedColor = null;
+    } },
+      h("h2", {}, "Add a calendar"),
+      h("p", { class: "help" }, "iPhone: Calendar app › Calendars › ⓘ next to a calendar › turn on Public Calendar › Share Link. Paste it here. Any ICS link (e.g. a sports schedule) works too."),
+      h("label", {}, h("span", { class: "lb" }, "Calendar link"), link),
+      h("div", { style: "display:flex;gap:12px;align-items:flex-end" },
+        h("label", { style: "flex:1" }, h("span", { class: "lb" }, "Name on TV"), name),
+        h("div", { style: "display:flex;flex-direction:column;gap:6px" }, h("span", { class: "lb" }, "Colour"), sw)),
+      h("button", { class: "primary", type: "submit" }, "Add to TV")),
+    h("div", { class: "card" }, rows.length ? rows : h("div", { class: "empty" }, "No calendars yet.")),
+    h("p", { class: "help", style: "padding:0 4px 8px" }, "Links stay on your TV only and aren't shown again here. Anyone who has a public calendar link can view that calendar, so don't share it elsewhere."));
+}
+
+// ---- shell ----
+function render() {
+  const nav = document.getElementById("nav");
+  if (!S) { nav.classList.add("hidden"); renderPair(); return; }
+  nav.classList.remove("hidden");
+  for (const b of nav.querySelectorAll(".tab")) b.classList.toggle("on", b.dataset.tab === tab);
+  // Don't re-render under someone who's typing.
+  const a = document.activeElement;
+  if (a && main.contains(a) && (a.tagName === "INPUT" || a.tagName === "SELECT") && a.value) return;
+  ({ watching: renderWatching, dock: renderDock, wallpapers: renderWallpapers, calendar: renderCalendar }[tab] || renderWatching)();
+}
+
+document.getElementById("nav").addEventListener("click", (e) => {
+  const b = e.target.closest(".tab");
+  if (!b) return;
+  tab = b.dataset.tab;
+  try { localStorage.setItem("tab", tab); } catch (err) {}
+  render();
+  window.scrollTo(0, 0);
+});
+
+load();
+setInterval(() => { if (S && document.visibilityState === "visible" && !document.querySelector(".sheet-bg")) load(); }, 15000);
+</script>
+</body>
+</html>

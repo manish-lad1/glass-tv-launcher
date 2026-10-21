@@ -1,0 +1,16 @@
+<resources>
+    <!--
+        Plain Material, not DeviceDefault: on this Hisense build DeviceDefault made the
+        activity count as translucent, so Home left the previous app on screen.
+    -->
+    <style name="Theme.GlassLauncher" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSwipeToDismiss">false</item>
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+</resources>

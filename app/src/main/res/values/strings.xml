@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Glass Launcher</string>
+    <string name="remote_key_service_label">Glass Launcher remote buttons</string>
+    <string name="remote_key_service_description">Makes the YouTube, Prime Video, Hotstar and Settings buttons on the remote work while Glass Launcher is the home screen. It only reacts to those buttons and doesn\'t read screen content.</string>
+    <string name="media_watcher_label">Glass Launcher now watching</string>
+</resources>
