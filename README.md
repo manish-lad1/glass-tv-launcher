@@ -1,312 +1,161 @@
-# Glass Launcher
+# Glass TV Launcher
 
-A custom home screen for the VU TV (Android TV 11, 1920×1080 @ density 320). Build brief: [CLAUDE.md](CLAUDE.md). Designs: [design/](design/).
+A custom home screen for Android TV with a frosted-glass look: a clock, live widgets for weather, your calendars and what you're watching, and a dock of your apps. You can manage it from your phone over your home Wi-Fi. It replaces the stock Google TV home screen.
 
-## Status
+It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it works there day to day. Most of it is plain Android TV and should work elsewhere, but a few parts are specific to Hisense/MediaTek TVs (see [Hardware notes](#hardware-notes)).
 
-- **Phase 1 (done, tested on the TV 21 Oct 2026):** Home screen with the placeholder "Dusk Ridge" wallpaper and glass cards drawn from a pre-blurred copy, live clock and date, a dock of real apps, a dynamic All apps grid, D-pad focus rules, and the hold-Back recovery hatch. The widgets showed sample content until phase 3.
-- **Phase 2 (done, tested on the TV 21 Oct 2026):** Glass Launcher is the home screen. The stock launcher is disabled. Home, reboot and a launcher crash all land back on Glass Launcher. The remote's app buttons work (see below).
+![Home screen design](design/png/01-home.png)
 
-- **Phase 3 (done, tested on the TV 21 Oct 2026):** live widgets and their expanded screens.
-  - **Weather:** Open-Meteo, Pune, refreshed every 30 min, with Indian AQI (CPCB, from 24-h PM2.5/PM10 means).
-  - **Up next:** any ICS calendar link (Apple iCloud public calendars, or subscriptions like a Formula 1 feed), with RRULE, EXDATE, RECURRENCE-ID and time zones, via biweekly. Events from 2 weeks back to 5 weeks ahead are loaded. Long titles wrap to two lines on Home, and if they still don't fit the middle is cut so the end (e.g. "- Practice 1") stays visible.
-  - **Now watching:** a stack you flip with ◀ ▶. OK resumes and hold OK opens details.
-  - **Offline:** cached data stays on screen with its age ("Offline · 5 min"), and each calendar shows its own sync error.
-  - **Setup:** calendars and the watch list are managed from the phone companion (phase 5), or over adb (see below).
+## What it does
 
-- **Phase 4 (done, tested on the TV 21 Oct 2026):** wallpaper library and Ambient.
-  - **Wallpapers:** three built-in scenes (Dusk Ridge, Blue Hour, Ember Peaks) plus your own photos, stored at 1920×1080 JPEG 85%. Glass cards draw from a pre-blurred copy of the current wallpaper. In the rotating modes (daily / every N hours / time of day), Home changes wallpaper only quietly, when waking from Ambient or returning to Home. Picking a wallpaper on the phone or in Quick settings applies straight away.
-  - **Ambient:** after 3 min idle on Home. It's a slideshow of the whole library with a slow drift and a 2.5 s crossfade every 40 s, plus the big clock, date and weather, a glass chip with your next event after today, and "Resume <show>" (OK resumes). Any other key wakes it with focus where you left it.
-  - **Screensaver:** the same Ambient screen is the system screensaver (`GlassDream`). It starts after the TV's own 10-min timeout, e.g. on a paused video.
-  - **Memory (measured in phase 4):** about 100 MB PSS on Home and ~150 MB during the slideshow. Slides are freed as they leave the screen. Not re-measured after phases 5–6.
+**Home**
+- Clock and date, a glass weather chip, and an eye button that hides or shows the widgets.
+- Three widgets:
+  - **Weather:** temperature, today's high and low, and the next hours.
+  - **Up next:** your next calendar events.
+  - **Now watching:** a card stack of shows and films you're partway through.
+- A full-width dock of up to 8 apps, using each app's TV banner as its tile, plus an All apps grid.
+- Glass effects without live blur: each card draws a pre-blurred copy of the wallpaper behind it.
+- D-pad navigation designed for a TV remote. Holding Back for 5 seconds always opens Android Settings, as a recovery route.
 
-- **Phase 5 (done, tested on the TV 21 Oct 2026):** phone companion and automatic Now watching (details below).
+**Widgets and full screens**
+- **Weather** from [Open-Meteo](https://open-meteo.com), with the Indian air-quality index (CPCB method, from 24-hour PM2.5/PM10 averages), a 12-hour strip and a 6-day forecast. It refreshes every 30 min and keeps showing cached data offline, labelled with its age.
+- **Calendars** from any ICS link: Apple iCloud public calendars or subscriptions such as a sports schedule. It handles repeating events, exceptions and time zones, and shows a week strip, the rest of today and each day's agenda.
+- **Now watching:** ◀ ▶ flip through titles, OK resumes and holding OK shows details.
+  - **Titles fill in automatically** from apps that share what's playing (JioHotstar, SonyLIV, YouTube and others).
+  - **Hand-added titles** come from the phone, for apps that don't share (Netflix).
 
-- **Phase 6 (done, tested on the TV 22 Oct 2026):** Quick settings panel (input switching confirmed on HDMI) with an added Wi-Fi section, dock editing on the TV, and hold-OK in All apps.
+**Wallpapers, Ambient and the screensaver**
+- Three built-in scenes plus your own photos, stored at 1080p. Home's wallpaper can be fixed or rotate daily, every few hours, or by time of day.
+- After 3 minutes idle, Home turns into **Ambient**:
+  - a slow, drifting slideshow with a big clock
+  - your next event
+  - a "Resume" shortcut
+- The same Ambient screen also serves as the system screensaver.
 
-All six phases in the brief are done.
+**Quick settings** (OK on **M**, or the remote's Settings button)
+- **Inputs:** switch between HDMI 1–3, AV and Antenna.
+- **Wi-Fi:** nearby networks, with yours first.
+- **Wallpapers:** pick Home's wallpaper.
+- **TV settings:** shortcuts to the TV's own Picture, Sound and Sleep-timer menus.
+- **Pair a phone.**
 
-## Changes from the design
+**Dock editing**
+- Hold OK on a dock app to rearrange or remove apps. The tiles wiggle; ◀ ▶ move an app, ▼ removes it.
+- In All apps, hold OK on an app to add it to the dock.
 
-These are deliberate departures from the designs in `design/`, made during the build:
+**Phone companion**
+- **Pairing:** pair once by scanning a QR code on the TV.
+- **Using it:** open a web page served by the TV, with four tabs:
+  - **Watching:** add titles, set progress, upload artwork.
+  - **Dock:** add, order and remove apps.
+  - **Wallpapers:** upload photos and choose a mode.
+  - **Calendar:** add ICS links.
 
-- **Dock:** it spans the full content width (120–1800 px) so the top bar, widgets and dock line up on both sides. Tiles are 124 px tall instead of 104, and filled edge to edge with each app's TV banner (or its icon on the icon's own colour if there's no banner). They're about 194 px wide with 7 apps.
-- **Now watching:** the stack's right edge lines up with the rest of Home. Items behind the front one peek out as 14 px slivers (instead of 30 px).
-- **Eye button:** a new top-bar button (left of the weather chip) hides or shows the widgets to see the wallpaper. The choice is remembered.
-- **Wi-Fi section:** added to Quick settings (not in the design).
-- **Pairing card:** it's larger than the design (1320 × 680 px) so the title and expiry line fit.
+**Remote buttons**
+- The YouTube, Prime Video, Hotstar and Settings buttons on the remote keep working after the stock launcher is disabled. A small accessibility service handles them.
 
-## Quick settings
+## Screens
 
-Open it with OK on **M** or the remote's **Settings** button. Back closes it. The panel shows:
+The [design/](design/) folder has a mock-up of every screen ([design/png](design/png)) with exact sizes and colours ([design/html](design/html)). The built app follows them closely, with a few changes: a full-width dock with taller banner tiles, an eye button, and a Wi-Fi section in Quick settings.
 
-- **Input:** the TV's inputs, read from `TvInputManager` (HDMI 1–3, AV, Antenna). Choosing one switches straight away: a passthrough channel URI for HDMI and AV, and the Live TV app for the antenna. Android doesn't tell apps which input is on screen, so a blue dot marks the last one picked here.
-- **Wi-Fi:** nearby networks with yours first (✓), signal and padlocks. Apps can't switch Wi-Fi on Android 10+, so choosing a network opens the TV's Wi-Fi settings. This needs the location permission (see System changes).
-- **Wallpaper:** thumbnails of the library. Picking one sets it as Home's wallpaper (mode becomes fixed).
-- **TV settings:** Picture & brightness (`android.settings.DISPLAY_SETTINGS` → Hisense PictureActivity), Sound & Bluetooth (`SOUND_SETTINGS`), Sleep timer (`android.settings.TIMER_SETTINGS`), All settings, and Pair a phone.
+| | |
+|---|---|
+| ![All apps](design/png/02-all-apps.png) | ![Quick settings](design/png/04-quick-settings.png) |
+| ![Weather](design/png/10-weather-expanded.png) | ![Calendar](design/png/11-calendar-expanded.png) |
+| ![Ambient](design/png/03-ambient.png) | ![Dock editing](design/png/06-dock-edit.png) |
 
-## Dock editing
+## What's in this repo
 
-- **Hold OK on a dock app:** opens the editor with that app picked up.
-- **Moving:** ◀ ▶ moves the app you're holding, and OK drops it. When nothing is held, ◀ ▶ moves the selection and OK picks an app up.
-- **Removing:** ▼ removes the selected app.
-- **Adding:** OK on the dashed "+" opens All apps; choose an app to add it.
-- **Back:** finishes.
-- **Also in All apps:** holding OK on any app adds it to the dock.
-
-Changes save immediately and match the phone's Dock tab. The dock holds up to 8 apps.
-
-## Phone companion
-
-**Pairing:**
-1. On the TV, open Quick settings › **Pair a phone** (or hold OK on **M**). The pairing screen shows a QR code and a 4-digit code, valid for 5 minutes.
-2. Scan the QR with your phone camera. The page opens with the code filled in.
-3. Tap **Pair**. You only do this once per phone, and the session lasts a year.
-
-Or open `http://192.168.1.4:8080` on the phone and type the code.
-
-**Tabs:**
-- **Watching:** add or edit titles, set progress, add artwork, reorder, and remove.
-- **Dock:** add, reorder and remove apps (up to 8).
-- **Wallpapers:** upload photos (resized on the phone), choose which shows on Home, and pick the mode (fixed / daily / every N hours / time of day).
-- **Calendar:** add an ICS link with a name and colour, see sync status, sync now, and remove.
-
-**Security:**
-- The server (NanoHTTPD, port 8080) answers only requests from the home network that use the TV's IP address. That blocks DNS-rebinding tricks.
-- Changes require a custom header (`X-Glass`) and the session cookie (`HttpOnly`, `SameSite=Strict`). The TV stores only hashes of session tokens.
-- Five wrong pairing codes replace the code.
-- Calendar links are never sent back to the phone and are never logged.
-- It's plain `http` on the home Wi-Fi.
-
-To forget every paired phone, run `--es cmd unpair_all` (see below).
-
-**Automatic Now watching** (`MediaWatcher`):
-- The phone's Watching tab has an **Automatic Now watching** card. It lists each app seen playing as "✓ Shares titles" or "✗ Doesn't share titles · add these by hand", and fills in as you watch.
-- Artwork comes from the app when it sends a picture or a picture link. SonyLIV does; JioHotstar doesn't, so its titles get placeholder art unless you add one from the phone.
-- Android shares other apps' media sessions with an approved listener. When an app reports a title and is playing, that title is added to the front of Now watching, marked **Auto** on the phone, and its progress and time left are kept up to date. Notification contents are ignored.
-- Titles shorter than 5 min (trailers, previews, Shorts) are skipped. If no length is reported, a title counts only after 5 min of playing.
-- Finishing a title (95%+) removes it. At most 4 auto titles are kept.
-- Editing an auto title on the phone makes it a manual one.
-- **Netflix sends no title, so add Netflix shows by hand.** YouTube Music, Live TV and the Assistant are ignored.
-
-## Configure from adb (alternative to the phone)
-
-Commands go to `DevConfigReceiver`, which requires the `DUMP` permission, so only `adb shell` and the system can call it. Run them yourself so calendar links stay out of chat logs. Links are stored only in the app's private storage and are never written to logcat.
-
-Add an Apple calendar. In Calendar on the iPhone/Mac, share it as a **Public Calendar** and copy the `webcal://…` link. `color` is optional:
-
-```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd add_calendar --es name "'Personal'" --es color "'#7fd1ff'" --es url "'webcal://pXX-caldav.icloud.com/published/2/…'"
+```
+app/src/main/java/com/manishlad/glasslauncher/
+  MainActivity.kt        Home activity: key handling, idle → Ambient, launching apps/inputs
+  LauncherViewModel.kt   Screen state, focus restore, Quick settings and dock-edit state
+  GlassApp.kt            App-wide repositories, refresh loop, phone-companion server start
+  AppRepository.kt       Launchable apps, banners, default dock
+  Wallpaper.kt           Procedural scenes, scrim, pre-blur (the glass source)
+  Ambient.kt             Slideshow controller (shared by Ambient and the screensaver)
+  GlassDream.kt          System screensaver (DreamService)
+  RemoteKeyService.kt    Accessibility service for the remote's app buttons
+  MediaWatcher.kt        Notification listener: automatic Now watching from media sessions
+  DevConfigReceiver.kt   adb-only config commands (calendars, watch list, wallpapers)
+  DevImportProvider.kt   adb-only photo import (`content write`)
+  companion/             Phone companion: HTTP server (NanoHTTPD), pairing and sessions
+  data/                  Weather + Indian AQI, ICS calendars, Now watching, dock, wallpapers,
+                         TV inputs, Wi-Fi, per-app media record
+  ui/                    Compose screens: Home, widgets, All apps, expanded screens,
+                         Ambient, Quick settings, dock editor, pairing, glass components
+app/src/main/assets/companion/index.html   The phone web page (single file, no CDN)
+app/src/test/                              Unit tests: AQI maths, ICS recurrence expansion
+design/                                    Screen designs (PNG + HTML source)
+CLAUDE.md                                  Setup instructions for an AI coding agent
+tv-check.sh                                Read-only TV check script → tv-report.txt
 ```
 
-Remove a calendar by name:
+Built with Kotlin and Jetpack Compose (foundation only), with OkHttp, [biweekly](https://github.com/mangstadt/biweekly) for ICS, [NanoHTTPD](https://github.com/NanoHttpd/nanohttpd) and [ZXing](https://github.com/zxing/zxing). It targets Android 11 (API 30) and later.
+
+## Getting it running
+
+Setting the launcher up as a TV's home screen changes system settings, so it's done step by step with an undo for each change. **[CLAUDE.md](CLAUDE.md) has the full procedure**, written for an AI coding agent such as Claude Code but just as readable by a person.
+
+For an already-set-up TV, building and installing comes down to:
 
 ```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd remove_calendar --es name "'Holidays (test)'"
-```
-
-Add something you're watching. Only `title` and `package` are required. `link` is an optional deep link:
-
-```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd add_watching --es title "'The Long Field'" --es package com.netflix.ninja --es upto "'S2 · E5'" --es left "'24 min left'" --es progress 0.6
-```
-
-Clear the watch list:
-
-```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd clear_watching
-```
-
-### Wallpapers
-
-Add a photo of your own (any size or orientation; it's cropped to fill 1920×1080). `use=true` also makes it Home's wallpaper. `credit=` is optional and shown on Ambient:
-
-```bash
-adb -s 192.168.1.4:5555 shell 'content write --uri "content://com.manishlad.glasslauncher.dev/wallpaper?name=Goa%20Beach&use=true"' < ~/Pictures/goa.jpg
-```
-
-Remove a photo:
-
-```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd remove_wallpaper --es name "'Goa Beach'"
-```
-
-Choose how Home picks its wallpaper:
-- `fixed` (with `name`)
-- `daily`
-- `hours` (with `hours`, e.g. 6)
-- `timeofday` (with `morning`, `afternoon`, `evening` and/or `night`, each a list of names like `"'Goa Beach|Blue Hour'"`)
-
-For example:
-
-```bash
-adb -s 192.168.1.4:5555 shell am broadcast -n com.manishlad.glasslauncher/.DevConfigReceiver --es cmd wallpaper_mode --es mode daily
-```
-
-Testing Ambient sooner: `--es cmd idle --es seconds 10` (resets on restart; `--es seconds 180` is the normal 3 min).
-
-### Other commands
-
-`--es cmd unpair_all` (forget all paired phones), `--es cmd refresh` (fetch weather and calendars now), and `--es cmd offline` / `--es cmd offline --es on false` (simulate no network inside the app only, to check offline states; it resets on restart).
-
-## Toolchain (Mac, arm64)
-
-Installed with Homebrew: `openjdk@17`, `gradle` (used only to create the wrapper), and the `android-commandlinetools` cask, with SDK platform 35, build-tools 35.0.0 and platform-tools.
-
-```bash
-export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
-export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
-```
-
-`local.properties` points Gradle at the SDK. It isn't checked in.
-
-## Build and install
-
-Unit tests (Indian AQI maths, ICS recurrence expansion):
-
-```bash
-./gradlew testReleaseUnitTest
-```
-
-Use the release build: it's minified, and Compose debug builds are noticeably slow on this TV. It's signed with the debug key, which is fine for sideloading on one TV.
-
-```bash
-./gradlew assembleRelease
+./gradlew testReleaseUnitTest assembleRelease
 ```
 
 ```bash
-adb connect 192.168.1.4:5555
+adb -s <TV_IP>:5555 install -r app/build/outputs/apk/release/app-release.apk
 ```
 
-```bash
-adb -s 192.168.1.4:5555 install -r app/build/outputs/apk/release/app-release.apk
-```
+Use the release build: Compose debug builds are noticeably slow on TV hardware.
 
-```bash
-adb -s 192.168.1.4:5555 shell am start -n com.manishlad.glasslauncher/.MainActivity
-```
+## Using it
 
-Logs: `adb -s 192.168.1.4:5555 logcat -s GlassLauncher AndroidRuntime`
+| Where | Key | Does |
+|---|---|---|
+| Anywhere on Home | ▲ ▼ ◀ ▶ | Move between the top bar, widgets and dock; ◀ ▶ stop at the ends |
+| Dock | OK / hold OK | Open the app / edit the dock |
+| Weather, Up next | OK | Full screen |
+| Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
+| M (top right) | OK / hold OK | Quick settings / pair a phone |
+| Eye (top right) | OK | Hide or show the widgets |
+| All apps | Hold OK | Add the app to the dock |
+| Anywhere | Back / hold Back 5 s | Back to the dock / Android Settings |
+| Ambient | OK / any key | Resume the show / wake |
 
-## Remote behaviour
+**Phone companion:** on the TV, go to Quick settings › Pair a phone, then scan the QR with your phone. The page works on any phone browser on the same Wi-Fi, at `http://<TV_IP>:8080`.
 
-- The screen has three zones, stacked: top bar (eye button, weather chip, Wi-Fi, profile "M"), widgets, dock. ◀ ▶ stop at the ends of the top bar and of the dock.
-- ▲ from the dock goes to the widget directly above the focused tile.
-- On launch, focus lands on the last-used dock app. The same happens on Back and when you return from an app.
-- On Weather or Up next, OK opens the full screen.
-- Now watching: ◀ ▶ flip the stack (◀ on the first item moves to Up next). OK resumes and hold OK opens the details screen.
-- Back from a full screen returns focus to its widget. On the Calendar screen, ◀ ▶ change the day.
-- **Hold Back for 5 s** to open Android Settings (the recovery hatch).
-- The remote's app buttons:
-  - **Netflix** (`KEY_FN_F5`) sends Netflix's own start intent and works on its own.
-  - **YouTube** (key 293), **Prime Video** (295) and **Hotstar** (337) normally go to Hisense's handler (`com.hisense.tv.smartsense`), which sends a broadcast that only the stock launcher can receive. With the stock launcher off, they did nothing.
-  - **Settings** (`KEYCODE_NOTIFICATION`, 83) also did nothing.
-  - `RemoteKeyService`, an accessibility service with key filtering, now catches those four keys system-wide. It opens the app, or Quick settings for the Settings button.
-- "M" opens Quick settings; holding OK on "M" goes straight to phone pairing. The Wi-Fi chip opens Wi-Fi settings, and the eye button hides or shows the widgets.
-- The remote's Settings button opens Quick settings.
+## Privacy and security
 
-## System changes and how to undo them
-
-### 21 Oct 2026 · phase 2: Glass Launcher becomes the home screen
-
-The following commands were run:
-
-- `cmd package set-home-activity com.manishlad.glasslauncher/.MainActivity` (on its own, the stock launcher still won)
-- `pm disable-user --user 0 com.google.android.apps.tv.launcherx`
-- `pm disable-user --user 0 com.google.android.tungsten.setupwraith`
-
-**Undo** (restores the stock Google TV home and its button handling), with the TV connected over adb:
-
-```bash
-adb -s 192.168.1.4:5555 shell pm enable com.google.android.apps.tv.launcherx
-```
-
-```bash
-adb -s 192.168.1.4:5555 shell pm enable com.google.android.tungsten.setupwraith
-```
-
-```bash
-adb -s 192.168.1.4:5555 shell cmd package set-home-activity com.google.android.apps.tv.launcherx/.home.HomeActivity
-```
-
-Then press Home. If adb isn't reachable, hold Back for 5 s in Glass Launcher to get to Android Settings (Apps lets you re-enable the stock launcher).
-
-### 21 Oct 2026 · phase 2: remote-button accessibility service
-
-The following commands were run (both settings were empty or off before):
-
-- `settings put secure enabled_accessibility_services com.manishlad.glasslauncher/com.manishlad.glasslauncher.RemoteKeyService`
-- `settings put secure accessibility_enabled 1`
-
-**Undo:**
-
-```bash
-adb -s 192.168.1.4:5555 shell settings delete secure enabled_accessibility_services
-```
-
-```bash
-adb -s 192.168.1.4:5555 shell settings put secure accessibility_enabled 0
-```
-
-### 21 Oct 2026 · phase 4: Ambient as the system screensaver
-
-The following command was run (the previous value was `com.google.android.apps.tv.dreamx/.service.Backdrop`):
-
-- `settings put secure screensaver_components com.manishlad.glasslauncher/.GlassDream`
-
-**Undo** (restores Google's Backdrop screensaver):
-
-```bash
-adb -s 192.168.1.4:5555 shell settings put secure screensaver_components com.google.android.apps.tv.dreamx/.service.Backdrop
-```
-
-### 21 Oct 2026 · phase 5: automatic Now watching (media-session access)
-
-The following command was run (the permission wasn't granted before):
-
-- `cmd notification allow_listener com.manishlad.glasslauncher/com.manishlad.glasslauncher.MediaWatcher`
-
-**Undo:**
-
-```bash
-adb -s 192.168.1.4:5555 shell cmd notification disallow_listener com.manishlad.glasslauncher/com.manishlad.glasslauncher.MediaWatcher
-```
-
-### 21 Oct 2026 · phase 6: location permission for the Wi-Fi list
-
-The following command was run. Android 10+ requires location access for Wi-Fi scan results, and even for the connected network's name. Location services were already on.
-
-- `pm grant com.manishlad.glasslauncher android.permission.ACCESS_FINE_LOCATION`
-
-**Undo** (the Wi-Fi section then shows a note instead of the list):
-
-```bash
-adb -s 192.168.1.4:5555 shell pm revoke com.manishlad.glasslauncher android.permission.ACCESS_FINE_LOCATION
-```
-
-### Removing Glass Launcher completely
-
-Uninstalling Glass Launcher while the stock launcher is disabled leaves only `com.android.tv.settings/.system.FallbackHome`. **Run all the undo blocks above first**, then:
-
-```bash
-adb -s 192.168.1.4:5555 uninstall com.manishlad.glasslauncher
-```
+- Everything stays on the TV: no cloud backend, accounts or analytics. The only outside requests are to Open-Meteo for weather and to your calendar links.
+- **Calendar links:** stored only in the app's private storage. They're never logged, never sent back to the phone, and never in this repo.
+- **The phone server:**
+  - It only answers devices on the home network that address the TV by IP, which blocks DNS-rebinding tricks.
+  - Changes need a session cookie (`HttpOnly`, `SameSite=Strict`) plus a custom header. Pairing codes expire after 5 minutes and are replaced after 5 wrong tries, and the TV stores only hashes of session tokens.
+  - The connection is plain `http` on the home network.
+- **Automatic Now watching** reads only what apps publish as "now playing" (title, position, length, artwork). Notification contents are ignored.
 
 ## Known limitations
 
-- **Netflix** shares no titles with other apps, so Netflix shows must be added from the phone. **JioHotstar** shares titles but no artwork.
-- **Finished titles disappear:** an automatically added title is removed once it reaches 95%.
-- **Inputs:** Android doesn't tell apps which input is on screen. The blue dot in Quick settings marks the last one picked there.
-- **Wi-Fi:** apps can't switch networks on Android 10+, so choosing a network opens the TV's Wi-Fi settings.
-- **Weather location** is fixed to Pune (`WeatherPlace` in `data/Weather.kt`). Changing it from the phone isn't built.
-- **TMDB artwork lookup** was skipped by choice. Use the phone's "Add artwork" for titles without pictures.
-- **Memory:** RSS (about 180–230 MB) is above the brief's ~150 MB target, partly because RSS includes shared system libraries. PSS is about 100 MB on Home.
+- **Netflix** doesn't share what's playing, so Netflix titles must be added from the phone. **JioHotstar** shares titles but no artwork.
+- **Finished titles disappear:** automatically added titles are removed once 95% watched.
+- **Current input unknown:** Android doesn't tell apps which input is on screen. Quick settings marks the last input picked there.
+- **Wi-Fi switching:** apps can't switch Wi-Fi networks (Android 10+), so choosing a network opens the TV's Wi-Fi settings.
+- **Fixed personal values:** the weather location (Pune), the profile name and the TV name are set in code; [CLAUDE.md](CLAUDE.md) lists where.
+- **Memory:** about 100 MB PSS on Home and ~150 MB during the Ambient slideshow.
 
-## Notes
+## Hardware notes
 
-- **Theme gotcha:** the app theme must not inherit `Theme.DeviceDefault`. On this Hisense build it made the activity count as translucent (`occludesParent=false`), so pressing Home left the previous app on screen. It now uses `Theme.Material.NoActionBar` with `windowIsTranslucent=false`.
-- If an app freezes (logcat shows "pause timeout" / "stop timeout" for it), launches won't show it. Run `adb shell am force-stop <package>`. This happened once to Prime Video while Home was broken.
+These parts are specific to the TV it was built on and may need adjusting elsewhere:
 
-- Inter is bundled from rsms/inter v4.1 (OFL). The licence is in `third_party_inter_LICENSE.txt`.
-- Package visibility uses `<queries>` for LEANBACK_LAUNCHER and LAUNCHER intents rather than QUERY_ALL_PACKAGES.
-- `tv-material` isn't used. Every surface is a custom glass draw, so its components would mostly be overridden. Plain Compose foundation handles the focus.
+- **Remote app-button key codes** (YouTube 293, Prime Video 295, Hotstar 337, Settings 83) are from a VU/Hisense remote.
+- **Live TV app:** `com.mediatek.wwtv.tvcenter` (MediaTek's Live TV app) plays the antenna input.
+- **TV settings shortcuts** point to the system screens that open `android.settings.DISPLAY_SETTINGS`, `SOUND_SETTINGS` and `TIMER_SETTINGS`.
+- **App theme:** must not inherit `Theme.DeviceDefault`. On this TV it made the home screen count as see-through, so the Home key left the previous app showing.
+
+## Credits
+
+- [Inter](https://rsms.me/inter/) typeface by Rasmus Andersson, bundled under the SIL Open Font License (see `third_party_inter_LICENSE.txt`).
+- Weather data by [Open-Meteo.com](https://open-meteo.com) (CC BY 4.0). Air quality is a model forecast converted to the Indian AQI scale.
+- biweekly, NanoHTTPD, ZXing, OkHttp and AndroidX under their respective licences.
