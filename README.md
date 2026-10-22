@@ -64,8 +64,9 @@ Taken on the TV (1920×1080) with the owner's own photo as the wallpaper. Calend
 | ![Home with the widgets hidden](docs/screenshots/home-wallpaper.png)<br>Home with the widgets hidden (eye button) | ![All apps](docs/screenshots/all-apps.png)<br>All apps |
 | ![Weather](docs/screenshots/weather.png)<br>Weather, with the Indian AQI | ![Calendar](docs/screenshots/calendar.png)<br>Calendar |
 | ![Quick settings](docs/screenshots/quick-settings.png)<br>Quick settings: inputs and Wi-Fi | ![Quick settings, lower half](docs/screenshots/quick-settings-tv.png)<br>Quick settings: wallpapers and TV settings |
+| ![Dock editing](docs/screenshots/dock-edit.png)<br>Dock editing (hold OK on an app) | ![Ambient](docs/screenshots/ambient.png)<br>Ambient, after 3 minutes idle |
 
-The [design/](design/) folder has the original mock-ups of every screen ([design/png](design/png)) with exact sizes and colours ([design/html](design/html)), including screens not shown above (Ambient, dock editing, phone pairing and the phone page).
+The [design/](design/) folder has the original mock-ups of every screen ([design/png](design/png)) with exact sizes and colours ([design/html](design/html)), including screens not shown above (phone pairing and the phone page).
 
 ## What's in this repo
 
