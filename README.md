@@ -4,7 +4,7 @@ A custom home screen for Android TV with a frosted-glass look: a clock, live wid
 
 It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it works there day to day. Most of it is plain Android TV and should work elsewhere, but a few parts are specific to Hisense/MediaTek TVs (see [Hardware notes](#hardware-notes)).
 
-![Home screen design](design/png/01-home.png)
+![Home screen on the TV](docs/screenshots/home.png)
 
 ## What it does
 
@@ -55,15 +55,17 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 **Remote buttons**
 - The YouTube, Prime Video, Hotstar and Settings buttons on the remote keep working after the stock launcher is disabled. A small accessibility service handles them.
 
-## Screens
+## Screenshots
 
-The [design/](design/) folder has a mock-up of every screen ([design/png](design/png)) with exact sizes and colours ([design/html](design/html)). The built app follows them closely, with a few changes: a full-width dock with taller banner tiles, an eye button, and a Wi-Fi section in Quick settings.
+Taken on the TV (1920×1080) with the owner's own photo as the wallpaper. Calendar events, watch titles and Wi-Fi network names are blurred for privacy.
 
 | | |
 |---|---|
-| ![All apps](design/png/02-all-apps.png) | ![Quick settings](design/png/04-quick-settings.png) |
-| ![Weather](design/png/10-weather-expanded.png) | ![Calendar](design/png/11-calendar-expanded.png) |
-| ![Ambient](design/png/03-ambient.png) | ![Dock editing](design/png/06-dock-edit.png) |
+| ![Home with the widgets hidden](docs/screenshots/home-wallpaper.png)<br>Home with the widgets hidden (eye button) | ![All apps](docs/screenshots/all-apps.png)<br>All apps |
+| ![Weather](docs/screenshots/weather.png)<br>Weather, with the Indian AQI | ![Calendar](docs/screenshots/calendar.png)<br>Calendar |
+| ![Quick settings](docs/screenshots/quick-settings.png)<br>Quick settings: inputs and Wi-Fi | ![Quick settings, lower half](docs/screenshots/quick-settings-tv.png)<br>Quick settings: wallpapers and TV settings |
+
+The [design/](design/) folder has the original mock-ups of every screen ([design/png](design/png)) with exact sizes and colours ([design/html](design/html)), including screens not shown above (Ambient, dock editing, phone pairing and the phone page).
 
 ## What's in this repo
 
@@ -88,6 +90,7 @@ app/src/main/java/com/manishlad/glasslauncher/
 app/src/main/assets/companion/index.html   The phone web page (single file, no CDN)
 app/src/test/                              Unit tests: AQI maths, ICS recurrence expansion
 design/                                    Screen designs (PNG + HTML source)
+docs/screenshots/                          Screenshots from the TV (private details blurred)
 CLAUDE.md                                  Setup instructions for an AI coding agent
 tv-check.sh                                Read-only TV check script → tv-report.txt
 ```
