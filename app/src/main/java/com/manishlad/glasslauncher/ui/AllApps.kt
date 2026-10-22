@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.manishlad.glasslauncher.LaunchableApp
@@ -58,31 +59,58 @@ fun AllAppsScreen(
                 else { Chip("Hold OK to add to dock"); Chip("Back to Home") }
             }
         }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(6),
-            contentPadding = PaddingValues(edge.px, edge.px, edge.px, 72.px),
-            horizontalArrangement = Arrangement.spacedBy(40.px),
-            verticalArrangement = Arrangement.spacedBy(40.px),
-        ) {
-            itemsIndexed(apps, key = { _, a -> a.packageName }) { i, app ->
-                var focused by remember { mutableStateOf(false) }
-                Column(verticalArrangement = Arrangement.spacedBy(14.px), horizontalAlignment = Alignment.CenterHorizontally) {
-                    GlassButton(
-                        onClick = { if (addMode) onAddToDock(app) else onLaunch(app) },
-                        onLongClick = { message = onAddToDock(app) },
-                        modifier = Modifier.fillMaxWidth().height(132.px),
-                        radius = 28.px,
-                        focusScale = 1.08f,
-                        focusRequester = if (i == 0) first else null,
-                        onFocus = { focused = it },
-                    ) { AppArt(app, 84) }
-                    T(
-                        app.label, 21, Modifier.fillMaxWidth(),
-                        weight = if (focused) 600 else 500,
-                        alpha = if (focused) 1f else .86f,
-                        align = TextAlign.Center,
-                    )
-                }
+        AppsGrid(
+            apps = apps,
+            onSelect = { if (addMode) onAddToDock(it) else onLaunch(it) },
+            onHold = { message = onAddToDock(it) },
+            first = first,
+            edge = edge,
+        )
+    }
+}
+
+/**
+ * The 6-column app grid (All apps screen and the Home "Apps" tab). Tiles are filled with each
+ * app's banner; OK selects, hold OK adds to the dock. [upTarget]: where ▲ from the top row goes.
+ */
+@Composable
+fun AppsGrid(
+    apps: List<LaunchableApp>,
+    onSelect: (LaunchableApp) -> Unit,
+    onHold: (LaunchableApp) -> Unit,
+    modifier: Modifier = Modifier,
+    first: FocusRequester? = null,
+    upTarget: FocusRequester? = null,
+    edge: Int = 20,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(6),
+        modifier = modifier,
+        contentPadding = PaddingValues(edge.px, edge.px, edge.px, 72.px),
+        horizontalArrangement = Arrangement.spacedBy(40.px),
+        verticalArrangement = Arrangement.spacedBy(40.px),
+    ) {
+        itemsIndexed(apps, key = { _, a -> a.packageName }) { i, app ->
+            var focused by remember { mutableStateOf(false) }
+            Column(verticalArrangement = Arrangement.spacedBy(14.px), horizontalAlignment = Alignment.CenterHorizontally) {
+                GlassButton(
+                    onClick = { onSelect(app) },
+                    onLongClick = { onHold(app) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(132.px)
+                        .then(if (i < 6 && upTarget != null) Modifier.focusProperties { up = upTarget } else Modifier),
+                    radius = 28.px,
+                    focusScale = 1.08f,
+                    focusRequester = if (i == 0) first else null,
+                    onFocus = { focused = it },
+                ) { AppArt(app, 84) }
+                T(
+                    app.label, 21, Modifier.fillMaxWidth(),
+                    weight = if (focused) 600 else 500,
+                    alpha = if (focused) 1f else .86f,
+                    align = TextAlign.Center,
+                )
             }
         }
     }

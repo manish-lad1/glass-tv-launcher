@@ -83,7 +83,7 @@ adb -s <TV> shell am start -n com.manishlad.glasslauncher/.MainActivity
 Check with a screenshot:
 - the wallpaper and the widgets load (weather needs internet)
 - the dock shows the apps' banners
-- ◀ ▶ ▲ ▼ move focus as described in `README.md`
+- ◀ ▶ ▲ ▼ move focus as described in `README.md`, and moving onto the **Apps** tab shows the app grid
 - **holding Back for 5 s opens Android Settings.** Confirm this recovery route works before step 5. Ask the user to hold Back on the real remote; `input keyevent` can't hold a key.
 
 ## 5. Make it the home screen (ask first)

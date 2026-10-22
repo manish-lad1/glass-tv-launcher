@@ -8,13 +8,17 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 
 ## What it does
 
+**Home and Apps tabs**
+- Netflix-style tabs in the top bar: **Home** and **Apps**. Moving focus onto a tab switches the page.
+- The **Apps** tab shows every installed app in a grid (hold OK to add one to the dock).
+
 **Home**
 - Clock and date, a glass weather chip, and an eye button that hides or shows the widgets.
 - Three widgets:
   - **Weather:** temperature, today's high and low, and the next hours.
   - **Up next:** your next calendar events.
   - **Now watching:** a card stack of shows and films you're partway through.
-- A full-width dock of up to 8 apps, using each app's TV banner as its tile, plus an All apps grid.
+- A full-width dock of up to 8 apps, using each app's TV banner as its tile.
 - Glass effects without live blur: each card draws a pre-blurred copy of the wallpaper behind it.
 - D-pad navigation designed for a TV remote. Holding Back for 5 seconds always opens Android Settings, as a recovery route.
 
@@ -42,7 +46,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 
 **Dock editing**
 - Hold OK on a dock app to rearrange or remove apps. The tiles wiggle; ◀ ▶ move an app, ▼ removes it.
-- In All apps, hold OK on an app to add it to the dock.
+- On the Apps tab, hold OK on an app to add it to the dock.
 
 **Phone companion**
 - **Pairing:** pair once by scanning a QR code on the TV.
@@ -119,12 +123,13 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Where | Key | Does |
 |---|---|---|
 | Anywhere on Home | ▲ ▼ ◀ ▶ | Move between the top bar, widgets and dock; ◀ ▶ stop at the ends |
+| Home / Apps tabs | Focus | Switch page (Back on Apps returns to Home) |
 | Dock | OK / hold OK | Open the app / edit the dock |
 | Weather, Up next | OK | Full screen |
 | Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
 | M (top right) | OK / hold OK | Quick settings / pair a phone |
 | Eye (top right) | OK | Hide or show the widgets |
-| All apps | Hold OK | Add the app to the dock |
+| Apps tab | OK / hold OK | Open the app / add it to the dock |
 | Anywhere | Back / hold Back 5 s | Back to the dock / Android Settings |
 | Ambient | OK / any key | Resume the show / wake |
 
