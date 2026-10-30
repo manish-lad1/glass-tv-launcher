@@ -289,17 +289,12 @@ private fun TopBar(
 
 // ---- Widgets ------------------------------------------------------------------------------
 
-/** The three slots, left to right: 400 px, 460 px, and the rest (≈756 px). Contents chosen on the phone. */
+/** The three slots, left to right, equal widths (≈539 px each). Contents chosen on the phone. */
 @Composable
 private fun WidgetRow(widgets: WidgetSlots, data: HomeData, actions: HomeActions) {
     Row(Modifier.fillMaxWidth().height(304.px), horizontalArrangement = Arrangement.spacedBy(32.px)) {
         data.slots.forEachIndexed { i, kind ->
-            val size = when (i) {
-                0 -> Modifier.width(400.px)
-                1 -> Modifier.width(460.px)
-                else -> Modifier.weight(1f)
-            }
-            key(kind) { SlotWidget(kind, size.fillMaxHeight().then(widgets.track(i)), data, actions) }
+            key(kind) { SlotWidget(kind, Modifier.weight(1f).fillMaxHeight().then(widgets.track(i)), data, actions) }
         }
     }
 }
