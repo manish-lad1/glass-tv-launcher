@@ -62,6 +62,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        // The theme is opaque, but on this Hisense build the system sometimes recreates Home as
+        // translucent, leaving the previous app (e.g. a paused video) "visible" underneath and
+        // blocking screenshots. Re-assert opaque every time Home comes to the front.
+        setTranslucent(false)
         vm.exitAmbient()
         vm.refreshApps()
         vm.returnHome()

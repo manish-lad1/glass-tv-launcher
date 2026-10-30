@@ -12,6 +12,7 @@ import com.manishlad.glasslauncher.data.DOCK_MAX
 import com.manishlad.glasslauncher.data.DayPart
 import com.manishlad.glasslauncher.data.WallpaperMode
 import com.manishlad.glasslauncher.data.WatchItem
+import com.manishlad.glasslauncher.data.WidgetKind
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -153,6 +154,14 @@ class CompanionServer(private val app: GlassApp) : NanoHTTPD(COMPANION_PORT) {
                 bytes("image/jpeg", f.readBytes())
             }
 
+            // Home widget slots: {"slot": 0-2, "kind": "weather" | "upnext" | "watching" | "f1"}
+            s.method == Method.PUT && path == "/api/widgets" -> {
+                val b = body(s)
+                val kind = WidgetKind.of(b.getString("kind")) ?: return json(Response.Status.BAD_REQUEST, JSONObject().put("error", "Unknown widget."))
+                runBlocking { app.widgetSlots.set(b.getInt("slot"), kind) }
+                ok()
+            }
+
             // Dock
             s.method == Method.PUT && path == "/api/dock" -> {
                 val a = body(s).getJSONArray("packages")
@@ -256,6 +265,8 @@ class CompanionServer(private val app: GlassApp) : NanoHTTPD(COMPANION_PORT) {
             .put("dockMax", DOCK_MAX)
             .put("apps", JSONArray(all.map { JSONObject().put("package", it.packageName).put("label", it.label) }))
             .put("dock", JSONArray(app.dock.packages.value))
+            .put("widgetSlots", JSONArray(app.widgetSlots.slots.value.map { it.id }))
+            .put("widgetKinds", JSONArray(WidgetKind.entries.map { JSONObject().put("id", it.id).put("label", it.label) }))
             .put("watching", JSONArray(w.map { item ->
                 JSONObject().put("id", item.id).put("title", item.title).put("package", item.packageName)
                     .put("app", labels[item.packageName] ?: item.packageName)

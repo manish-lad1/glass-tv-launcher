@@ -7,6 +7,7 @@ import android.util.Log
 import com.manishlad.glasslauncher.data.DayPart
 import com.manishlad.glasslauncher.data.WallpaperMode
 import com.manishlad.glasslauncher.data.WatchItem
+import com.manishlad.glasslauncher.data.WidgetKind
 import kotlinx.coroutines.launch
 
 private const val TAG = "GlassLauncher"
@@ -72,10 +73,15 @@ class DevConfigReceiver : BroadcastReceiver() {
                         Log.i(TAG, "dev: wallpaper mode $mode")
                     }
                     "idle" -> app.idleMsOverride = intent.getStringExtra("seconds")?.toLongOrNull()?.times(1000)
+                    // slots = "weather,upnext,f1" (left, middle, right)
+                    "widgets" -> intent.getStringExtra("slots")?.split(',')?.forEachIndexed { i, id ->
+                        WidgetKind.of(id.trim())?.let { app.widgetSlots.set(i, it) }
+                    }
                     "unpair_all" -> app.pairing.revokeAll()
                     "offline" -> app.simulateOffline = intent.getStringExtra("on") != "false"
                     "refresh" -> {
                         app.weather.refresh()
+                        app.f1.refresh()
                         app.calendar.refresh()
                     }
                     else -> Log.w(TAG, "dev: unknown cmd $cmd")

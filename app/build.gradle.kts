@@ -53,4 +53,6 @@ dependencies {
     implementation("com.google.zxing:core:3.5.3")
 
     testImplementation("junit:junit:4.13.2")
+    // Real org.json for JVM unit tests (Android's copy is only a stub there).
+    testImplementation("org.json:json:20240303")
 }

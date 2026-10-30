@@ -35,6 +35,8 @@ fun LauncherRoot(
     val calendar by vm.calendar.collectAsState()
     val watching by vm.watching.collectAsState()
     val watchingLoaded by vm.watchingLoaded.collectAsState()
+    val f1 by vm.f1.collectAsState()
+    val slots by vm.widgetSlots.collectAsState()
     Box(
         Modifier
             .fillMaxSize()
@@ -57,7 +59,7 @@ fun LauncherRoot(
                 if (!vm.appsLoaded || !calendar.loaded || !watchingLoaded) return@Box
                 CompositionLocalProvider(LocalGlassSource provides GlassSource(backdrop.blurred, rootSize)) {
                     HomeScreen(
-                        data = HomeData(vm.dock, vm.apps, vm.lastDockApp, weather, calendar, watching, vm.watchingIndex, vm.widgetsHidden, vm.homeTab),
+                        data = HomeData(vm.dock, vm.apps, vm.lastDockApp, weather, calendar, watching, vm.watchingIndex, vm.widgetsHidden, vm.homeTab, f1, slots),
                         actions = HomeActions(
                             onLaunch = onLaunch,
                             onTab = vm::selectTab,
@@ -66,6 +68,7 @@ fun LauncherRoot(
                             onOpenWeather = { vm.openWidget(Screen.Weather) },
                             onOpenCalendar = { vm.openWidget(Screen.Calendar) },
                             onOpenWatching = { vm.openWidget(Screen.Watching) },
+                            onOpenF1 = { vm.openWidget(Screen.F1) },
                             onOpenPairing = vm::openPairing,
                             onOpenQuickSettings = vm::openQuickSettings,
                             onEditDock = vm::startDockEdit,
@@ -114,6 +117,7 @@ fun LauncherRoot(
                         )
                         Screen.Weather -> WeatherScreen(weather)
                         Screen.Calendar -> CalendarScreen(calendar)
+                        Screen.F1 -> F1Screen(f1)
                         Screen.Pairing -> {
                             val pairing by vm.pairing.collectAsState()
                             PairingScreen(pairing, onNewCode = vm::newPairingCode, onDone = vm::back)

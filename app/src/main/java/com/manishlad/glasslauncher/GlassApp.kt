@@ -11,6 +11,8 @@ import com.manishlad.glasslauncher.companion.Pairing
 import fi.iki.elonen.NanoHTTPD
 import com.manishlad.glasslauncher.data.CalendarRepository
 import com.manishlad.glasslauncher.data.DockRepository
+import com.manishlad.glasslauncher.data.F1Repository
+import com.manishlad.glasslauncher.data.WidgetSlotsRepository
 import com.manishlad.glasslauncher.data.MediaAppsRecord
 import com.manishlad.glasslauncher.data.NowWatchingRepository
 import com.manishlad.glasslauncher.data.WallpaperLibrary
@@ -46,6 +48,8 @@ class GlassApp : Application() {
     }
     val weather by lazy { WeatherRepository(this, http) }
     val calendar by lazy { CalendarRepository(this, http) }
+    val f1 by lazy { F1Repository(this, http) }
+    val widgetSlots by lazy { WidgetSlotsRepository(this) }
     val watching by lazy { NowWatchingRepository(this) }
     val wallpapers by lazy { WallpaperLibrary(this) }
     val dock by lazy { DockRepository(this) }
@@ -73,9 +77,11 @@ class GlassApp : Application() {
         }
         scope.launch {
             weather.loadCache()
+            f1.loadCache()
             calendar.load()
             watching.load()
             dock.load()
+            widgetSlots.load()
             wallpapers.load()
             wallpaperChanged()
             // Weather and calendars refresh every 30 min (retry every 5 min after a failure).
@@ -84,6 +90,7 @@ class GlassApp : Application() {
                 launch(Dispatchers.IO) { hostName.refresh() }
                 launch { weather.refreshIfStale() }
                 launch { calendar.refreshIfStale() }
+                launch { f1.refreshIfStale() }
                 delay(60_000)
             }
         }

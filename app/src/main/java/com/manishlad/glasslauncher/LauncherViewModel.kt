@@ -21,6 +21,7 @@ import com.manishlad.glasslauncher.data.TvSources
 import com.manishlad.glasslauncher.data.WallpaperInfo
 import com.manishlad.glasslauncher.data.WallpaperMode
 import com.manishlad.glasslauncher.data.WifiNetworks
+import com.manishlad.glasslauncher.data.WidgetKind
 import com.manishlad.glasslauncher.data.WifiSnapshot
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
@@ -37,14 +38,7 @@ private val LAST_INPUT = stringPreferencesKey("last_input")
 /** Tabs in Home's top bar (Netflix-style): focusing a tab switches the page. */
 enum class HomeTab { Home, Apps }
 
-enum class Screen { Home, AllApps, Weather, Calendar, Watching, Pairing, DockEdit }
-
-/** Home widget slots, left to right. */
-object Widget {
-    const val WEATHER = 0
-    const val CALENDAR = 1
-    const val WATCHING = 2
-}
+enum class Screen { Home, AllApps, Weather, Calendar, Watching, Pairing, DockEdit, F1 }
 
 class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     val repo = AppRepository(app)
@@ -52,6 +46,8 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     val weather = glass.weather.state
     val calendar = glass.calendar.state
     val watching = glass.watching.items
+    val f1 = glass.f1.state
+    val widgetSlots = glass.widgetSlots.slots
     val watchingLoaded = glass.watching.loaded
 
     /** Apps have been listed at least once; until then Home shows only the wallpaper. */
@@ -190,12 +186,15 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
         if (screen == Screen.AllApps && allAppsAddMode) { allAppsAddMode = false; screen = Screen.DockEdit; return }
         if (screen == Screen.Pairing) glass.pairing.cancel()
         editMoving = false
-        returnToWidget = when (screen) {
-            Screen.Weather -> Widget.WEATHER
-            Screen.Calendar -> Widget.CALENDAR
-            Screen.Watching -> Widget.WATCHING
+        // Back from a widget's full screen returns focus to that widget's slot.
+        val kind = when (screen) {
+            Screen.Weather -> WidgetKind.Weather
+            Screen.Calendar -> WidgetKind.UpNext
+            Screen.Watching -> WidgetKind.Watching
+            Screen.F1 -> WidgetKind.F1
             else -> null
         }
+        returnToWidget = kind?.let { glass.widgetSlots.slots.value.indexOf(it) }?.takeIf { it >= 0 }
         screen = Screen.Home
         homeFocusRequest++
     }

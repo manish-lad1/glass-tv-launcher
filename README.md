@@ -14,10 +14,11 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 
 **Home**
 - Clock and date, a glass weather chip, and an eye button that hides or shows the widgets.
-- Three widgets:
+- Three widget spots, each set from the phone (Home tab › Home widgets) to one of:
   - **Weather:** temperature, today's high and low, and the next hours.
   - **Up next:** your next calendar events.
   - **Now watching:** a card stack of shows and films you're partway through.
+  - **Formula 1:** the next race, the next session with a live countdown, and the top 3 in the championship.
 - A full-width dock of up to 8 apps, using each app's TV banner as its tile.
 - Glass effects without live blur: each card draws a pre-blurred copy of the wallpaper behind it.
 - D-pad navigation designed for a TV remote. Holding Back for 5 seconds always opens Android Settings, as a recovery route.
@@ -26,6 +27,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 - **Weather** from [Open-Meteo](https://open-meteo.com), with the Indian air-quality index (CPCB method, from 24-hour PM2.5/PM10 averages), a 12-hour strip and a 6-day forecast. It refreshes every 30 min and keeps showing cached data offline, labelled with its age.
 - **Calendars** from any ICS link: Apple iCloud public calendars or subscriptions such as a sports schedule. It handles repeating events, exceptions and time zones, and shows a week strip, the rest of today and each day's agenda.
 - **Now watching:** ◀ ▶ flip through titles, OK resumes and holding OK shows details.
+- **Formula 1** from the free [Jolpica F1 API](https://github.com/jolpica/jolpica-f1) (no key): the full screen shows the weekend's sessions in your time zone with countdowns, the last race's podium, and the driver and constructor standings. It refreshes hourly, every 15 min around a race weekend, and keeps showing cached data offline.
   - **Titles fill in automatically** from apps that share what's playing (JioHotstar, SonyLIV, YouTube and others).
   - **Hand-added titles** come from the phone, for apps that don't share (Netflix).
 
@@ -52,7 +54,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 - **Pairing:** pair once by scanning a QR code on the TV.
 - **Using it:** open a web page served by the TV, with four tabs:
   - **Watching:** add titles, set progress, upload artwork.
-  - **Dock:** add, order and remove apps.
+  - **Home:** choose the three widgets, and add, order and remove dock apps.
   - **Wallpapers:** upload photos and choose a mode.
   - **Calendar:** add ICS links.
 
@@ -125,7 +127,7 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Anywhere on Home | ▲ ▼ ◀ ▶ | Move between the top bar, widgets and dock; ◀ ▶ stop at the ends |
 | Home / Apps tabs | Focus | Switch page (Back on Apps returns to Home) |
 | Dock | OK / hold OK | Open the app / edit the dock |
-| Weather, Up next | OK | Full screen |
+| Weather, Up next, Formula 1 | OK | Full screen |
 | Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
 | M (top right) | OK / hold OK | Quick settings / pair a phone |
 | Eye (top right) | OK | Hide or show the widgets |
@@ -167,4 +169,5 @@ These parts are specific to the TV it was built on and may need adjusting elsewh
 
 - [Inter](https://rsms.me/inter/) typeface by Rasmus Andersson, bundled under the SIL Open Font License (see `third_party_inter_LICENSE.txt`).
 - Weather data by [Open-Meteo.com](https://open-meteo.com) (CC BY 4.0). Air quality is a model forecast converted to the Indian AQI scale.
+- Formula 1 data from the [Jolpica F1 API](https://github.com/jolpica/jolpica-f1) (Ergast-compatible).
 - biweekly, NanoHTTPD, ZXing, OkHttp and AndroidX under their respective licences.

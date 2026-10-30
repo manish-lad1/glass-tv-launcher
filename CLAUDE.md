@@ -159,7 +159,8 @@ Other `cmd` values:
 - `clear_watching`
 - `remove_wallpaper` (`name`)
 - `wallpaper_mode` (`mode` = `fixed` + `name` | `daily` | `hours` + `hours` | `timeofday` + `morning`/`afternoon`/`evening`/`night` = `"Name|Name"`)
-- `refresh`
+- `refresh` (weather, calendars and F1)
+- `widgets` (`slots` = three of `weather`, `upnext`, `watching`, `f1`, comma-separated, left to right)
 - `unpair_all`
 - `idle` (`seconds`; shortens the time before Ambient, for testing)
 - `offline` (`on` = `false` to undo; simulates no network for testing)
@@ -182,6 +183,7 @@ Rebuild, then install with `install -r` while the launcher is on screen. Install
 ## Troubleshooting
 
 - **Home key leaves the old app on screen:** the theme has become translucent (see step 5). Check with `dumpsys activity activities`: a home task with `translucent=true` or `occludesParent=false` is the problem.
+- **Screenshots come back as 0 bytes with the launcher in front:** the previous app is still "visible" underneath (`dumpsys activity activities` shows the home task `translucent=true`), usually a video app's protected layer. The launcher calls `setTranslucent(false)` in `onResume` to prevent this; if it still happens, restart the launcher with `am force-stop com.manishlad.glasslauncher` and `am start -a android.intent.action.MAIN -c android.intent.category.HOME`.
 - **An app won't open from the dock:** it may be frozen. Look for "pause timeout" or "stop timeout" in `logcat -s ActivityTaskManager`. Fix with `adb shell am force-stop <package>`.
 - **Remote button does nothing:** check that the accessibility service is still enabled (`settings get secure enabled_accessibility_services`). Then press the button and look for the key code in `logcat | grep interceptKeyTq`.
 - **Now watching misses an app:** check `logcat -s GlassLauncher | grep watch:` for the skip reason. "no title" means the app doesn't share titles (Netflix). "short" means under 5 min. "no length, played under 5 min" means it's a live stream that hasn't played long enough.

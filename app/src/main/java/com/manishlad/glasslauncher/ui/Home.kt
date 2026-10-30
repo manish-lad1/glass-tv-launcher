@@ -41,6 +41,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 import com.manishlad.glasslauncher.HomeTab
+import androidx.compose.runtime.key
+import com.manishlad.glasslauncher.data.F1State
+import com.manishlad.glasslauncher.data.WidgetKind
 import com.manishlad.glasslauncher.LaunchableApp
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.requiredWidth
@@ -65,6 +68,8 @@ class HomeData(
     val watchingIndex: Int,
     val widgetsHidden: Boolean,
     val tab: HomeTab,
+    val f1: F1State,
+    val slots: List<WidgetKind>,
 )
 
 class HomeActions(
@@ -75,6 +80,7 @@ class HomeActions(
     val onOpenWeather: () -> Unit,
     val onOpenCalendar: () -> Unit,
     val onOpenWatching: () -> Unit,
+    val onOpenF1: () -> Unit,
     val onOpenPairing: () -> Unit,
     val onOpenQuickSettings: () -> Unit,
     val onEditDock: (String) -> Unit,
@@ -283,13 +289,29 @@ private fun TopBar(
 
 // ---- Widgets ------------------------------------------------------------------------------
 
+/** The three slots, left to right: 400 px, 460 px, and the rest (≈756 px). Contents chosen on the phone. */
 @Composable
 private fun WidgetRow(widgets: WidgetSlots, data: HomeData, actions: HomeActions) {
     Row(Modifier.fillMaxWidth().height(304.px), horizontalArrangement = Arrangement.spacedBy(32.px)) {
-        WidgetCard(Modifier.width(400.px).then(widgets.track(0)), actions.onOpenWeather) { WeatherWidget(data.weather) }
-        WidgetCard(Modifier.width(460.px).then(widgets.track(1)), actions.onOpenCalendar) { UpNextWidget(data.calendar) }
-        NowWatchingStack(
-            Modifier.weight(1f).fillMaxHeight().then(widgets.track(2)),
+        data.slots.forEachIndexed { i, kind ->
+            val size = when (i) {
+                0 -> Modifier.width(400.px)
+                1 -> Modifier.width(460.px)
+                else -> Modifier.weight(1f)
+            }
+            key(kind) { SlotWidget(kind, size.fillMaxHeight().then(widgets.track(i)), data, actions) }
+        }
+    }
+}
+
+@Composable
+private fun SlotWidget(kind: WidgetKind, modifier: Modifier, data: HomeData, actions: HomeActions) {
+    when (kind) {
+        WidgetKind.Weather -> WidgetCard(modifier, actions.onOpenWeather) { WeatherWidget(data.weather) }
+        WidgetKind.UpNext -> WidgetCard(modifier, actions.onOpenCalendar) { UpNextWidget(data.calendar) }
+        WidgetKind.F1 -> WidgetCard(modifier, actions.onOpenF1) { F1Widget(data.f1) }
+        WidgetKind.Watching -> NowWatchingStack(
+            modifier,
             items = data.watching,
             apps = data.apps,
             index = data.watchingIndex,
