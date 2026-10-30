@@ -35,9 +35,6 @@ private val LAST_DOCK_APP = stringPreferencesKey("last_dock_app")
 private val WIDGETS_HIDDEN = booleanPreferencesKey("widgets_hidden")
 private val LAST_INPUT = stringPreferencesKey("last_input")
 
-/** Tabs in Home's top bar (Netflix-style): focusing a tab switches the page. */
-enum class HomeTab { Home, Apps }
-
 enum class Screen { Home, AllApps, Weather, Calendar, Watching, Pairing, DockEdit, F1 }
 
 class LauncherViewModel(app: Application) : AndroidViewModel(app) {
@@ -137,13 +134,6 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    var homeTab by mutableStateOf(HomeTab.Home)
-        private set
-
-    fun selectTab(tab: HomeTab) {
-        homeTab = tab
-    }
-
     fun openAllApps() {
         screen = Screen.AllApps
     }
@@ -165,7 +155,6 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     /** Home, or returning from an app: close everything and focus the dock. */
     fun returnHome() {
         if (screen == Screen.Pairing) glass.pairing.cancel()
-        homeTab = HomeTab.Home
         quickSettingsOpen = false
         allAppsAddMode = false
         editMoving = false
@@ -177,12 +166,6 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     /** Back: from an expanded widget return to that widget; otherwise to the dock. */
     fun back() {
         if (quickSettingsOpen) { closeQuickSettings(); return }
-        if (screen == Screen.Home && homeTab == HomeTab.Apps) {
-            homeTab = HomeTab.Home
-            returnToWidget = null
-            homeFocusRequest++
-            return
-        }
         if (screen == Screen.AllApps && allAppsAddMode) { allAppsAddMode = false; screen = Screen.DockEdit; return }
         if (screen == Screen.Pairing) glass.pairing.cancel()
         editMoving = false

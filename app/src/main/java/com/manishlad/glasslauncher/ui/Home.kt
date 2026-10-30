@@ -40,7 +40,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
-import com.manishlad.glasslauncher.HomeTab
 import androidx.compose.runtime.key
 import com.manishlad.glasslauncher.data.F1State
 import com.manishlad.glasslauncher.data.WidgetKind
@@ -67,15 +66,13 @@ class HomeData(
     val watching: List<WatchItem>,
     val watchingIndex: Int,
     val widgetsHidden: Boolean,
-    val tab: HomeTab,
     val f1: F1State,
     val slots: List<WidgetKind>,
 )
 
 class HomeActions(
     val onLaunch: (LaunchableApp) -> Unit,
-    val onTab: (HomeTab) -> Unit,
-    val onAddToDock: (LaunchableApp) -> String,
+    val onAllApps: () -> Unit,
     val onOpenSettings: (String) -> Unit,
     val onOpenWeather: () -> Unit,
     val onOpenCalendar: () -> Unit,
@@ -98,84 +95,28 @@ fun HomeScreen(data: HomeData, actions: HomeActions, focusRequest: Int, returnTo
     LaunchedEffect(focusRequest) {
         if (returnToWidget != null && !data.widgetsHidden) runCatching { widgets.requesters[returnToWidget].requestFocus() }
     }
-    val appsTab = remember { FocusRequester() }
-    // The dock leaves composition on the Apps tab; remember which focus request it already handled
-    // so switching back to Home (by focusing the tab) doesn't pull focus down to the dock.
+    // Which focus request the dock already handled, so it doesn't re-pull focus on recomposition.
     val dockFocus = remember { HandledRequest() }
     Column(
         Modifier.fillMaxSize().padding(horizontal = 120.px, vertical = 72.px),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        TopBar(data.weather, data.widgetsHidden, data.tab, actions, profile, appsTab)
-        when (data.tab) {
-            HomeTab.Home -> {
-                // Hidden widgets keep their space, so the dock doesn't move and the wallpaper shows through.
-                Box(Modifier.fillMaxWidth().height(304.px)) {
-                    androidx.compose.animation.AnimatedVisibility(visible = !data.widgetsHidden, enter = fadeIn(tween(300)), exit = fadeOut(tween(300))) {
-                        WidgetRow(widgets, data, actions)
-                    }
-                }
-                Dock(
-                    data.dock, data.lastDockApp, focusRequest, dockFocus,
-                    focusDock = returnToWidget == null || data.widgetsHidden,
-                    widgets, actions.onLaunch, actions.onEditDock,
-                )
+        TopBar(data.weather, data.widgetsHidden, actions, profile)
+        // Hidden widgets keep their space, so the dock doesn't move and the wallpaper shows through.
+        Box(Modifier.fillMaxWidth().height(304.px)) {
+            androidx.compose.animation.AnimatedVisibility(visible = !data.widgetsHidden, enter = fadeIn(tween(300)), exit = fadeOut(tween(300))) {
+                WidgetRow(widgets, data, actions)
             }
-            HomeTab.Apps -> AppsPage(data.apps, actions, appsTab, Modifier.weight(1f).padding(top = 36.px))
         }
+        Dock(
+            data.dock, data.lastDockApp, focusRequest, dockFocus,
+            focusDock = returnToWidget == null || data.widgetsHidden,
+            widgets, actions.onLaunch, actions.onAllApps, actions.onEditDock,
+        )
     }
 }
 
 private class HandledRequest { var value = -1 }
-
-/** Home's "Apps" tab: every launchable app, below the top bar. Hold OK adds one to the dock. */
-@Composable
-private fun AppsPage(apps: List<LaunchableApp>, actions: HomeActions, appsTab: FocusRequester, modifier: Modifier) {
-    var message by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(message) { if (message != null) { kotlinx.coroutines.delay(2500); message = null } }
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.px)) {
-        Row(Modifier.fillMaxWidth().height(36.px), verticalAlignment = Alignment.CenterVertically) {
-            T("${apps.size} apps", 24, alpha = .8f)
-            T("   ·   " + (message ?: "Hold OK to add to the dock"), 22, alpha = if (message != null) 1f else .65f)
-        }
-        // The grid adds 20 px each side so focused tiles can grow; widen it by that much to keep
-        // the tiles aligned with the clock and the M button.
-        Box(Modifier.fillMaxWidth().weight(1f)) {
-            AppsGrid(
-                apps = apps,
-                onSelect = actions.onLaunch,
-                onHold = { message = actions.onAddToDock(it) },
-                upTarget = appsTab,
-                modifier = Modifier.align(Alignment.TopCenter).requiredWidth(1720.px),
-            )
-        }
-    }
-}
-
-/**
- * Netflix-style tab: plain text, the selected tab white and underlined, the focused one in a glass
- * pill. Focusing a tab switches the page; ◀ ▶ move between tabs.
- */
-@Composable
-private fun TabItem(label: String, selected: Boolean, onFocused: () -> Unit, modifier: Modifier = Modifier) {
-    var focused by remember { mutableStateOf(false) }
-    val focus by animateFocus(focused)
-    Box(
-        modifier
-            .tvSelectable(onFocus = { focused = it; if (it) onFocused() }, onClick = onFocused)
-            .graphicsLayer { val s = 1f + .06f * focus; scaleX = s; scaleY = s }
-            .clip(RoundedCornerShape(999.px))
-            .background(Color.White.copy(alpha = .18f * focus))
-            .border(1.px, Color.White.copy(alpha = .6f * focus), RoundedCornerShape(999.px))
-            .padding(horizontal = 30.px, vertical = 12.px),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.px)) {
-            T(label, 28, weight = if (selected) 600 else 500, alpha = if (selected || focused) 1f else .7f)
-            Box(Modifier.size(28.px, 4.px).clip(CircleShape).background(Color.White.copy(alpha = if (selected) 1f else 0f)))
-        }
-    }
-}
 
 /** Where each widget sits horizontally, so ▲ from the dock goes to the widget directly above. */
 private class WidgetSlots {
@@ -220,20 +161,11 @@ fun weatherAge(state: WeatherState, now: Instant = Instant.now(), long: Boolean 
 private fun TopBar(
     weather: WeatherState,
     widgetsHidden: Boolean,
-    tab: HomeTab,
     actions: HomeActions,
     profile: FocusRequester,
-    appsTab: FocusRequester,
 ) {
     val now by rememberNow()
     val is24 = is24Hour()
-    Box(Modifier.fillMaxWidth()) {
-    // Tabs, centred between the clock and the chips, level with the chips.
-    Row(Modifier.align(Alignment.TopCenter), horizontalArrangement = Arrangement.spacedBy(12.px)) {
-        TabItem("Home", tab == HomeTab.Home, { actions.onTab(HomeTab.Home) },
-            Modifier.focusProperties { left = FocusRequester.Cancel })
-        TabItem("Apps", tab == HomeTab.Apps, { actions.onTab(HomeTab.Apps) }, Modifier.focusRequester(appsTab))
-    }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
         Column(verticalArrangement = Arrangement.spacedBy(10.px)) {
             Row {
@@ -249,12 +181,9 @@ private fun TopBar(
             T(now.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.ENGLISH)), 30, alpha = .82f)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(16.px), verticalAlignment = Alignment.CenterVertically) {
-            // Show / hide the widgets (to see the wallpaper).
-            // Show / hide the widgets. Only on the Home tab, which has widgets; ◀ from here goes to the tabs.
-            if (tab == HomeTab.Home) {
-                GlassButton(onClick = actions.onToggleWidgets, radius = 999.dp) {
-                    Glyph(if (widgetsHidden) Glyphs.EyeOff else Glyphs.Eye, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
-                }
+            // Show / hide the widgets (to see the wallpaper). ◀ stops here (the start of the top bar).
+            GlassButton(onClick = actions.onToggleWidgets, Modifier.focusProperties { left = FocusRequester.Cancel }, radius = 999.dp) {
+                Glyph(if (widgetsHidden) Glyphs.EyeOff else Glyphs.Eye, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
             }
             val current = weather.data?.current
             GlassButton(onClick = actions.onOpenWeather, radius = 999.dp, focusScale = 1.08f) {
@@ -283,7 +212,6 @@ private fun TopBar(
                 T("M", 26, weight = 600)
             }
         }
-    }
     }
 }
 
@@ -419,6 +347,7 @@ private fun Dock(
     focusDock: Boolean,
     widgets: WidgetSlots,
     onLaunch: (LaunchableApp) -> Unit,
+    onAllApps: () -> Unit,
     onEditDock: (String) -> Unit,
 ) {
     var focusedName by remember { mutableStateOf<String?>(null) }
@@ -440,18 +369,25 @@ private fun Dock(
                 horizontalArrangement = Arrangement.spacedBy(DOCK_GAP.px, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Tiles share the dock's width after its padding (1680 − 48); All apps is the Apps tab now.
-                val tileW = minOf(260, (1632 - (apps.size - 1) * DOCK_GAP) / apps.size.coerceAtLeast(1))
+                // Tiles share what's left after the padding, the All apps tile and its divider (1680 − 48 − 124 − 37).
+                val tileW = minOf(260, (1471 - (apps.size - 1) * DOCK_GAP) / apps.size.coerceAtLeast(1))
                 for ((i, app) in apps.withIndex()) {
                     GlassButton(
                         onClick = { onLaunch(app) },
                         onLongClick = { onEditDock(app.packageName) },
-                        modifier = Modifier.size(tileW.px, DOCK_TILE_H.px).upToWidget(widgets).stopAtEnds(i == 0, i == apps.lastIndex),
+                        modifier = Modifier.size(tileW.px, DOCK_TILE_H.px).upToWidget(widgets).stopAtEnds(i == 0, last = false),
                         radius = 28.px,
                         focusRequester = requesters[app.packageName],
                         onFocus = { if (it) focusedName = app.label else if (focusedName == app.label) focusedName = null },
                     ) { AppArt(app, 84) }
                 }
+                Box(Modifier.size(1.px, 88.px).background(Color.White.copy(alpha = .28f)))
+                GlassButton(
+                    onClick = onAllApps,
+                    modifier = Modifier.size(DOCK_TILE_H.px).upToWidget(widgets).stopAtEnds(first = false, last = true),
+                    radius = 28.px,
+                    onFocus = { if (it) focusedName = "All apps" else if (focusedName == "All apps") focusedName = null },
+                ) { Glyph(Glyphs.Grid, 40) }
             }
         }
         Spacer(Modifier.height(22.px))

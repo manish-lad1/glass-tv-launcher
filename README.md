@@ -8,10 +8,6 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 
 ## What it does
 
-**Home and Apps tabs**
-- Netflix-style tabs in the top bar: **Home** and **Apps**. Moving focus onto a tab switches the page.
-- The **Apps** tab shows every installed app in a grid (hold OK to add one to the dock).
-
 **Home**
 - Clock and date, a glass weather chip, and an eye button that hides or shows the widgets.
 - Three widget spots, each set from the phone (Home tab › Home widgets) to one of:
@@ -19,7 +15,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
   - **Up next:** your next calendar events.
   - **Now watching:** a card stack of shows and films you're partway through.
   - **Formula 1:** the next race, the next session with a live countdown, and the top 3 in the championship.
-- A full-width dock of up to 8 apps, using each app's TV banner as its tile.
+- A full-width dock of up to 8 apps, using each app's TV banner as its tile, plus an **All apps** tile that opens a grid of every installed app.
 - Glass effects without live blur: each card draws a pre-blurred copy of the wallpaper behind it.
 - D-pad navigation designed for a TV remote. Holding Back for 5 seconds always opens Android Settings, as a recovery route.
 
@@ -48,7 +44,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 
 **Dock editing**
 - Hold OK on a dock app to rearrange or remove apps. The tiles wiggle; ◀ ▶ move an app, ▼ removes it.
-- On the Apps tab, hold OK on an app to add it to the dock.
+- In All apps, hold OK on an app to add it to the dock.
 
 **Phone companion**
 - **Pairing:** pair once by scanning a QR code on the TV.
@@ -67,7 +63,7 @@ Taken on the TV (1920×1080) with the owner's own photo as the wallpaper. Calend
 
 | | |
 |---|---|
-| ![Home with the widgets hidden](docs/screenshots/home-wallpaper.png)<br>Home with the widgets hidden (eye button) | ![Apps tab](docs/screenshots/apps-tab.png)<br>Apps tab |
+| ![Home with the widgets hidden](docs/screenshots/home-wallpaper.png)<br>Home with the widgets hidden (eye button) | ![All apps](docs/screenshots/apps-tab.png)<br>All apps |
 | ![Weather](docs/screenshots/weather.png)<br>Weather, with the Indian AQI | ![Calendar](docs/screenshots/calendar.png)<br>Calendar |
 | ![Quick settings](docs/screenshots/quick-settings.png)<br>Quick settings: inputs and Wi-Fi | ![Quick settings, lower half](docs/screenshots/quick-settings-tv.png)<br>Quick settings: wallpapers and TV settings |
 | ![Dock editing](docs/screenshots/dock-edit.png)<br>Dock editing (hold OK on an app) | ![Ambient](docs/screenshots/ambient.png)<br>Ambient, after 3 minutes idle |
@@ -125,13 +121,12 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Where | Key | Does |
 |---|---|---|
 | Anywhere on Home | ▲ ▼ ◀ ▶ | Move between the top bar, widgets and dock; ◀ ▶ stop at the ends |
-| Home / Apps tabs | Focus | Switch page (Back on Apps returns to Home) |
 | Dock | OK / hold OK | Open the app / edit the dock |
 | Weather, Up next, Formula 1 | OK | Full screen |
 | Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
 | M (top right) | OK / hold OK | Quick settings / pair a phone |
 | Eye (top right) | OK | Hide or show the widgets |
-| Apps tab | OK / hold OK | Open the app / add it to the dock |
+| All apps | OK / hold OK | Open the app / add it to the dock |
 | Anywhere | Back / hold Back 5 s | Back to the dock / Android Settings |
 | Ambient | OK / any key | Resume the show / wake |
 

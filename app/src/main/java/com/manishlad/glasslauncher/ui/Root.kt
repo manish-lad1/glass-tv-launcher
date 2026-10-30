@@ -50,20 +50,14 @@ fun LauncherRoot(
         when (vm.screen) {
             Screen.Home -> {
                 FullScreenImage(backdrop.sharp)
-                // Apps tab: dim the wallpaper so the grid's labels stay legible.
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = vm.homeTab == com.manishlad.glasslauncher.HomeTab.Apps,
-                    enter = androidx.compose.animation.fadeIn(), exit = androidx.compose.animation.fadeOut(),
-                ) { Box(Modifier.fillMaxSize().background(Color(0x80060614))) }
                 // Cold start (boot, crash): wallpaper only until the apps and stored data are in.
                 if (!vm.appsLoaded || !calendar.loaded || !watchingLoaded) return@Box
                 CompositionLocalProvider(LocalGlassSource provides GlassSource(backdrop.blurred, rootSize)) {
                     HomeScreen(
-                        data = HomeData(vm.dock, vm.apps, vm.lastDockApp, weather, calendar, watching, vm.watchingIndex, vm.widgetsHidden, vm.homeTab, f1, slots),
+                        data = HomeData(vm.dock, vm.apps, vm.lastDockApp, weather, calendar, watching, vm.watchingIndex, vm.widgetsHidden, f1, slots),
                         actions = HomeActions(
                             onLaunch = onLaunch,
-                            onTab = vm::selectTab,
-                            onAddToDock = { vm.addToDock(it.packageName, it.label) },
+                            onAllApps = vm::openAllApps,
                             onOpenSettings = onOpenSettings,
                             onOpenWeather = { vm.openWidget(Screen.Weather) },
                             onOpenCalendar = { vm.openWidget(Screen.Calendar) },
