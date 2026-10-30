@@ -142,6 +142,8 @@ The best route is the **phone companion**:
 2. The user scans the QR code with their phone and taps **Pair**.
 3. On the phone page they add calendar links, watch-list titles and wallpapers, and arrange the dock.
 
+The phone page lives at `http://glass-tv.local:8080`: the launcher answers mDNS queries for that name (`companion/HostName.kt`, a small built-in mDNS responder) and re-announces it when the TV's IP changes, so pairing survives DHCP changes. If the TV's IP is unknown, find it from the Mac with `dns-sd -G v4 glass-tv.local`. The Cast name also works: `dns-sd -B _googlecast._tcp`, then `dns-sd -L <name> _googlecast._tcp`.
+
 From the Mac, `curl` may go through a proxy that can't reach the home network. Use `curl --noproxy '*'`. The built-in browser panes of some AI tools refuse home-network addresses.
 
 **adb alternative** (useful when you're doing the setup). The commands go to a receiver that requires `DUMP`, which only adb and the system hold. Have the user run calendar commands themselves so the link doesn't pass through you.
@@ -183,7 +185,8 @@ Rebuild, then install with `install -r` while the launcher is on screen. Install
 - **An app won't open from the dock:** it may be frozen. Look for "pause timeout" or "stop timeout" in `logcat -s ActivityTaskManager`. Fix with `adb shell am force-stop <package>`.
 - **Remote button does nothing:** check that the accessibility service is still enabled (`settings get secure enabled_accessibility_services`). Then press the button and look for the key code in `logcat | grep interceptKeyTq`.
 - **Now watching misses an app:** check `logcat -s GlassLauncher | grep watch:` for the skip reason. "no title" means the app doesn't share titles (Netflix). "short" means under 5 min. "no length, played under 5 min" means it's a live stream that hasn't played long enough.
-- **Phone can't reach the page:** the phone must be on the same Wi-Fi and use the TV's IP (other host names are rejected). The server logs `companion server on :8080` at start-up.
+- **Phone can't reach the page:** the phone must be on the same Wi-Fi and use `glass-tv.local` or the TV's current IP (other host names are rejected). The server logs `companion server on :8080` and `mDNS: glass-tv.local -> <ip>` at start-up. If neither works, the router may have given the TV a new IP; suggest a DHCP reservation on the router.
+- **adb says "No route to host" but the TV answers `ping`:** the adb server on the Mac is stale. Run `adb kill-server`, then `adb connect <TV>` again.
 - **Logs:** `adb -s <TV> logcat -s GlassLauncher AndroidRuntime`.
 
 ## Undo / restore

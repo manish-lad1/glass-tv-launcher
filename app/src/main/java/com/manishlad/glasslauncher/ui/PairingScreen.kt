@@ -34,6 +34,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.manishlad.glasslauncher.companion.COMPANION_PORT
+import com.manishlad.glasslauncher.companion.HOST_DOMAIN
 import com.manishlad.glasslauncher.companion.PairingState
 import com.manishlad.glasslauncher.companion.localIpv4
 import kotlinx.coroutines.delay
@@ -67,7 +68,8 @@ fun PairingScreen(state: PairingState, onNewCode: () -> Unit, onDone: () -> Unit
             Row(Modifier.fillMaxSize().padding(horizontal = 64.px, vertical = 56.px), horizontalArrangement = Arrangement.spacedBy(64.px), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(380.px).clip(RoundedCornerShape(36.px)).background(Color.White).padding(30.px), contentAlignment = Alignment.Center) {
                     if (waiting != null && !expired) {
-                        val bmp = remember(waiting.code, ip) { qr("http://$ip:$COMPANION_PORT/#code=${waiting.code}") }
+                        // The fixed name, so the phone's login survives the TV's IP changing.
+                        val bmp = remember(waiting.code) { qr("http://$HOST_DOMAIN:$COMPANION_PORT/#code=${waiting.code}") }
                         Image(bmp, contentDescription = "Pairing QR code", modifier = Modifier.fillMaxSize(), filterQuality = FilterQuality.None)
                     }
                 }
@@ -99,7 +101,7 @@ fun PairingScreen(state: PairingState, onNewCode: () -> Unit, onDone: () -> Unit
                             val first = if (expired) "Code expired · press OK for a new one" else "Expires in ${left / 60}:%02d".format(left % 60)
                             T("$first   ·   Works only on your home Wi-Fi", 22, Modifier.padding(start = 58.px), alpha = .75f)
                             Spacer(Modifier.height(10.px))
-                            T("Or open $ip:$COMPANION_PORT", 22, Modifier.padding(start = 58.px), alpha = .75f)
+                            T("Or open $HOST_DOMAIN:$COMPANION_PORT  (or $ip:$COMPANION_PORT)", 22, Modifier.padding(start = 58.px), alpha = .75f)
                         }
                     }
                 }

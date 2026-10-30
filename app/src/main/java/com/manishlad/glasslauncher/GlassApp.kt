@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.util.Log
 import com.manishlad.glasslauncher.companion.COMPANION_PORT
 import com.manishlad.glasslauncher.companion.CompanionServer
+import com.manishlad.glasslauncher.companion.HostNameResponder
 import com.manishlad.glasslauncher.companion.Pairing
 import fi.iki.elonen.NanoHTTPD
 import com.manishlad.glasslauncher.data.CalendarRepository
@@ -51,6 +52,7 @@ class GlassApp : Application() {
     val pairing by lazy { Pairing(this) }
     val mediaApps by lazy { MediaAppsRecord(this) }
     private var server: CompanionServer? = null
+    private val hostName by lazy { HostNameResponder(this) }
 
     /** Whether the media-session listener (automatic Now watching) has been granted. */
     fun mediaTrackingEnabled(): Boolean =
@@ -78,6 +80,8 @@ class GlassApp : Application() {
             wallpaperChanged()
             // Weather and calendars refresh every 30 min (retry every 5 min after a failure).
             while (true) {
+                // Keep glass-tv.local pointing at the current address (re-announces after an IP change).
+                launch(Dispatchers.IO) { hostName.refresh() }
                 launch { weather.refreshIfStale() }
                 launch { calendar.refreshIfStale() }
                 delay(60_000)

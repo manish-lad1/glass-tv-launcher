@@ -61,8 +61,11 @@ class CompanionServer(private val app: GlassApp) : NanoHTTPD(COMPANION_PORT) {
             return text(Response.Status.FORBIDDEN, "Home network only.")
         }
         val host = s.headers["host"]?.substringBeforeLast(':')?.trim('[', ']')
-        if (host != null && host !in localIpv4() && host != "localhost" && host != "127.0.0.1") {
-            return text(Response.Status.FORBIDDEN, "Open this page using the TV's address.")
+        // Only this TV's own IP or its fixed mDNS name (blocks DNS rebinding through other names).
+        val hostOk = host == null || host in localIpv4() || host.equals(HOST_DOMAIN, ignoreCase = true) ||
+            host == "localhost" || host == "127.0.0.1"
+        if (!hostOk) {
+            return text(Response.Status.FORBIDDEN, "Open this page at http://$HOST_DOMAIN:$COMPANION_PORT or the TV's address.")
         }
         if (s.method != Method.GET && s.headers["x-glass"] != "1") {
             return text(Response.Status.FORBIDDEN, "Missing header.")

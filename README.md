@@ -133,14 +133,14 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Anywhere | Back / hold Back 5 s | Back to the dock / Android Settings |
 | Ambient | OK / any key | Resume the show / wake |
 
-**Phone companion:** on the TV, go to Quick settings › Pair a phone, then scan the QR with your phone. The page works on any phone browser on the same Wi-Fi, at `http://<TV_IP>:8080`.
+**Phone companion:** on the TV, go to Quick settings › Pair a phone, then scan the QR with your phone. The page works on any phone browser on the same Wi-Fi, at **`http://glass-tv.local:8080`**. The TV announces that name itself (mDNS), so it keeps working when the router gives the TV a new IP address, and so does your phone's pairing. `http://<TV_IP>:8080` also works, but pairing done at an IP is lost if the IP changes.
 
 ## Privacy and security
 
 - Everything stays on the TV: no cloud backend, accounts or analytics. The only outside requests are to Open-Meteo for weather and to your calendar links.
 - **Calendar links:** stored only in the app's private storage. They're never logged, never sent back to the phone, and never in this repo.
 - **The phone server:**
-  - It only answers devices on the home network that address the TV by IP, which blocks DNS-rebinding tricks.
+  - It only answers devices on the home network that address the TV by its IP or by `glass-tv.local`, which blocks DNS-rebinding tricks.
   - Changes need a session cookie (`HttpOnly`, `SameSite=Strict`) plus a custom header. Pairing codes expire after 5 minutes and are replaced after 5 wrong tries, and the TV stores only hashes of session tokens.
   - The connection is plain `http` on the home network.
 - **Automatic Now watching** reads only what apps publish as "now playing" (title, position, length, artwork). Notification contents are ignored.
