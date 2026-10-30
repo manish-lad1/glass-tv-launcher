@@ -50,6 +50,7 @@ object Glyphs {
     val Lock = stroke("M8 11V8a4 4 0 0 1 8 0v3", "M6 11h12v9.5H6z")
     val Check = stroke("M5 12.5l4.5 4.5L19 7.5")
     val Chevron = stroke("M9.5 6l6 6-6 6")
+    val Home = stroke("M3.5 11L12 4l8.5 7", "M5.5 9.5V20h13V9.5", "M10 20v-5.5h4V20")
     val Picture = stroke("M4.5 5h15a1.5 1.5 0 0 1 1.5 1.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11A1.5 1.5 0 0 1 4.5 5z", "M3 15.5l5-4.5 4 3.5 3-2.5 6 4.5", "M15.5 8.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4z")
     val Input = stroke("M3 6.5h12v11H3z", "M15 12h6M18 9l3 3-3 3")
     val PlayOutline = stroke("M8 5.5v13l10.5-6.5z")

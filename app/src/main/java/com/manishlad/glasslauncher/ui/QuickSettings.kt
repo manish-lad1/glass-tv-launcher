@@ -13,8 +13,6 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,7 +67,6 @@ private val Ink = Color(0xFF16132E)
  * Quick settings (design 04): a glass panel on the right over Home. Focus stays inside the panel
  * until Back closes it. Inputs switch for real; picture/sound/timer open the TV's own menus.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuickSettingsPanel(
     kind: Panel,
@@ -114,15 +111,14 @@ fun QuickSettingsPanel(
                 when (kind) {
                     Panel.Inputs -> {
                         PanelTitle(Glyphs.Input, "Inputs", "Switch what the TV shows")
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.px), verticalArrangement = Arrangement.spacedBy(12.px)) {
-                            Pill("Home", selected = true, modifier = Modifier.focusRequester(first)) { actions.onInput(null) }
+                        // One row per input, like the Wi-Fi list. Android won't say which input is on
+                        // screen, so the ✓ marks the last one switched to from here.
+                        Column(verticalArrangement = Arrangement.spacedBy(10.px)) {
+                            InputRow(Glyphs.Home, "Home", "Stay on the launcher", checked = false, Modifier.focusRequester(first)) { actions.onInput(null) }
                             for (src in inputs) {
-                                Pill(src.label, selected = false, dot = src.id == lastInputId) { actions.onInput(src) }
+                                val last = src.id == lastInputId
+                                InputRow(Glyphs.Input, src.label, if (last) "Last used" else null, checked = last) { actions.onInput(src) }
                             }
-                        }
-                        if (lastInputId != null && inputs.any { it.id == lastInputId }) {
-                            Spacer(Modifier.height(14.px))
-                            T("• last used from here", 18, alpha = .6f)
                         }
                     }
                     Panel.Wallpapers -> {
@@ -182,6 +178,21 @@ fun QuickSettingsPanel(
     }
 }
 
+/** A full-width input row: icon, name, optional note, ✓ for the last-used input. */
+@Composable
+private fun InputRow(icon: ImageVector, label: String, note: String?, checked: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    GlassButton(onClick = onClick, modifier = modifier.fillMaxWidth(), radius = 18.px, focusScale = 1.03f, contentAlignment = Alignment.CenterStart) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 22.px, vertical = 14.px), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.px)) {
+            Glyph(icon, 26)
+            Column(Modifier.weight(1f)) {
+                T(label, 24, weight = if (checked) 600 else 400)
+                if (note != null) T(note, 18, alpha = .78f)
+            }
+            if (checked) Glyph(Glyphs.Check, 26)
+        }
+    }
+}
+
 /** Title row for a single-purpose panel: icon, name, and a short note. */
 @Composable
 private fun PanelTitle(icon: ImageVector, title: String, note: String?) {
@@ -216,19 +227,6 @@ private fun Section(title: String, note: String?) {
 @Composable
 private fun InkText(text: String, size: Int, weight: FontWeight = FontWeight.Medium) =
     androidx.compose.foundation.text.BasicText(text, style = TextStyle(color = Ink, fontFamily = Inter, fontWeight = weight, fontSize = size.pxSp))
-
-/** Input chip: selected = white with dark text (as in the design); focus = glass ring + scale. */
-@Composable
-private fun Pill(text: String, selected: Boolean, modifier: Modifier = Modifier, dot: Boolean = false, onClick: () -> Unit) {
-    GlassButton(onClick = onClick, modifier = modifier, radius = 999.dp, focusScale = 1.08f) {
-        Box(Modifier.then(if (selected) Modifier.background(Color.White) else Modifier)) {
-            Row(Modifier.padding(horizontal = 24.px, vertical = 12.px), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.px)) {
-                if (selected) InkText(text, 24) else T(text, 24, weight = 500)
-                if (dot) Box(Modifier.size(8.px).clip(CircleShape).background(Color(0xFF7FD1FF)))
-            }
-        }
-    }
-}
 
 @Composable
 private fun WallThumb(thumb: androidx.compose.ui.graphics.ImageBitmap, name: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
