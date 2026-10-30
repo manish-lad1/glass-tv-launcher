@@ -70,20 +70,15 @@ fun NowWatchingStack(
     var focused by remember { mutableStateOf(false) }
     val focus by animateFocus(focused)
     val front = index.coerceIn(0, (items.size - 1).coerceAtLeast(0))
-    val n = items.size
-    // Direction of the last flip, so a wrap-around (last → first) still slides forward.
-    var forward by remember { mutableStateOf(true) }
     Box(
         modifier
             .onFocusChanged { focused = it.isFocused }
             .onKeyEvent { e ->
                 if (e.type != KeyEventType.KeyDown) return@onKeyEvent false
-                // ◀ ▶ loop through the titles (last → first and back). With a single title there's
-                // nothing to flip, so ◀ ▶ move focus to the neighbouring widget instead.
-                if (n < 2) return@onKeyEvent false
                 when (e.key) {
-                    Key.DirectionLeft -> { forward = false; onIndex((front - 1 + n) % n); true }
-                    Key.DirectionRight -> { forward = true; onIndex((front + 1) % n); true }
+                    // ◀ at the first item lets focus move on to the widget on the left.
+                    Key.DirectionLeft -> if (front > 0) { onIndex(front - 1); true } else false
+                    Key.DirectionRight -> { if (front < items.size - 1) onIndex(front + 1); true }
                     else -> false
                 }
             }
@@ -101,6 +96,7 @@ fun NowWatchingStack(
         AnimatedContent(
             targetState = front,
             transitionSpec = {
+                val forward = targetState > initialState
                 (slideInHorizontally { if (forward) it / 3 else -it / 3 } + fadeIn()) togetherWith
                     (slideOutHorizontally { if (forward) -it / 3 else it / 3 } + fadeOut())
             },
@@ -108,11 +104,10 @@ fun NowWatchingStack(
         ) { i ->
             // The stack's right edge lines up with the rest of Home (1800 px): the next items peek
             // out as slim slivers inside the slot, and a lone item fills it.
-            // The list loops, so the items peeking behind are the next ones round.
-            val peeks = (n - 1).coerceIn(0, 2)
+            val peeks = (items.size - 1 - i).coerceIn(0, 2)
             Box(Modifier.fillMaxSize()) {
-                if (peeks >= 2) items[(i + 2) % n].let { Tile(Modifier.padding(start = 140.px, top = 40.px, bottom = 40.px), 30, .3f, .5f, it) }
-                if (peeks >= 1) items[(i + 1) % n].let { Tile(Modifier.padding(start = 70.px, end = (PEEK * (peeks - 1)).px, top = 20.px, bottom = 20.px), 33, .35f, .78f, it) }
+                items.getOrNull(i + 2)?.let { Tile(Modifier.padding(start = 140.px, top = 40.px, bottom = 40.px), 30, .3f, .5f, it) }
+                items.getOrNull(i + 1)?.let { Tile(Modifier.padding(start = 70.px, end = (PEEK * (peeks - 1)).px, top = 20.px, bottom = 20.px), 33, .35f, .78f, it) }
                 val item = items[i]
                 Tile(Modifier.padding(end = (PEEK * peeks).px), 36, .45f + .4f * focus, 1f, item, scrim = true)
                 FrontText(item, appLabel(item, apps), i, items.size, endPad = PEEK * peeks)

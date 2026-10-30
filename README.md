@@ -26,7 +26,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 **Widgets and full screens**
 - **Weather** from [Open-Meteo](https://open-meteo.com), with the Indian air-quality index (CPCB method, from 24-hour PM2.5/PM10 averages), a 12-hour strip and a 6-day forecast. It refreshes every 30 min and keeps showing cached data offline, labelled with its age.
 - **Calendars** from any ICS link: Apple iCloud public calendars or subscriptions such as a sports schedule. It handles repeating events, exceptions and time zones, and shows a week strip, the rest of today and each day's agenda.
-- **Now watching:** ◀ ▶ flip through titles (they loop: past the last comes the first), OK resumes and holding OK shows details. ▲ ▼ leave the card.
+- **Now watching:** ◀ ▶ flip through titles, OK resumes and holding OK shows details.
 - **Formula 1** from the free [Jolpica F1 API](https://github.com/jolpica/jolpica-f1) (no key): the full screen shows the weekend's sessions in your time zone with countdowns, the last race's podium, and the driver and constructor standings. It refreshes hourly, every 15 min around a race weekend, and keeps showing cached data offline.
   - **Titles fill in automatically** from apps that share what's playing (JioHotstar, SonyLIV, YouTube and others).
   - **Hand-added titles** come from the phone, for apps that don't share (Netflix).
@@ -128,7 +128,7 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Home / Apps tabs | Focus | Switch page (Back on Apps returns to Home) |
 | Dock | OK / hold OK | Open the app / edit the dock |
 | Weather, Up next, Formula 1 | OK | Full screen |
-| Now watching | ◀ ▶ / OK / hold OK | Flip (loops) / resume / details |
+| Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
 | M (top right) | OK / hold OK | Quick settings / pair a phone |
 | Eye (top right) | OK | Hide or show the widgets |
 | Apps tab | OK / hold OK | Open the app / add it to the dock |
