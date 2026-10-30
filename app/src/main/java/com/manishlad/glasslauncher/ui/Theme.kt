@@ -113,6 +113,37 @@ private fun middleEllipsis(text: String, width: Int, maxLines: Int, style: TextS
     return head.take(lo).trimEnd() + "… " + tail
 }
 
+/**
+ * Text sized so its width matches [targetWidthPx] (e.g. the date line under the clock), with the
+ * size kept between [minSize] and [maxSize] design px. Uses [baseSize] until the target is known.
+ */
+@Composable
+fun FitWidthText(
+    text: String,
+    targetWidthPx: Int,
+    baseSize: Number,
+    modifier: Modifier = Modifier,
+    minSize: Number = 22,
+    maxSize: Number = 36,
+    weight: Int = 400,
+    alpha: Float = 1f,
+) {
+    val measurer = rememberTextMeasurer()
+    fun style(sizePx: Float) = TextStyle(
+        color = Color.White.copy(alpha = alpha),
+        fontFamily = Inter,
+        fontWeight = FontWeight(weight),
+        fontSize = sizePx.pxSp,
+    )
+    val size = remember(text, targetWidthPx, weight) {
+        val base = baseSize.toFloat()
+        if (targetWidthPx <= 0) return@remember base
+        val measured = measurer.measure(text, style(base), maxLines = 1, softWrap = false).size.width
+        if (measured <= 0) base else (base * targetWidthPx / measured).coerceIn(minSize.toFloat(), maxSize.toFloat())
+    }
+    BasicText(text, modifier, style = style(size), maxLines = 1, softWrap = false)
+}
+
 /** Stacks children with [spacing], laying out only the ones that fit whole in the available height. */
 @Composable
 fun FitColumn(spacing: Dp, modifier: Modifier = Modifier, content: @Composable () -> Unit) {

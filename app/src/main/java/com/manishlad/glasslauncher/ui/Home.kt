@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.key
@@ -167,8 +168,10 @@ private fun TopBar(
     val now by rememberNow()
     val is24 = is24Hour()
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+        // The date line is sized to the clock's width so the two read as one aligned block.
+        var clockWidth by remember { mutableStateOf(0) }
         Column(verticalArrangement = Arrangement.spacedBy(10.px)) {
-            Row {
+            Row(Modifier.onSizeChanged { clockWidth = it.width }) {
                 T(
                     now.format(DateTimeFormatter.ofPattern(if (is24) "HH:mm" else "h:mm")),
                     132, Modifier.alignByBaseline(), weight = 200, tracking = -5, lineHeight = 132,
@@ -185,7 +188,7 @@ private fun TopBar(
                 w?.current?.let { deg(it.temp) },
                 w?.indianAqi(now)?.let { "AQI ${it.value}" },
             )
-            T((listOf(date) + extras).joinToString("  ·  "), 30, alpha = .82f)
+            FitWidthText((listOf(date) + extras).joinToString("  ·  "), clockWidth, baseSize = 30, alpha = .82f)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(16.px), verticalAlignment = Alignment.CenterVertically) {
             // Show / hide the widgets (to see the wallpaper). ◀ stops here (the start of the top bar).
