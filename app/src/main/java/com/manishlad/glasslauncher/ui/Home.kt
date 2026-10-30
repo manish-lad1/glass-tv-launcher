@@ -178,29 +178,23 @@ private fun TopBar(
                     T(now.format(DateTimeFormatter.ofPattern("a", Locale.ENGLISH)).uppercase(), 32, Modifier.alignByBaseline(), weight = 300, alpha = .8f)
                 }
             }
-            T(now.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.ENGLISH)), 30, alpha = .82f)
+            // Date, then the current temperature and Indian AQI (left out until weather data exists).
+            val date = now.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.ENGLISH))
+            val w = weather.data
+            val extras = listOfNotNull(
+                w?.current?.let { deg(it.temp) },
+                w?.indianAqi(now)?.let { "AQI ${it.value}" },
+            )
+            T((listOf(date) + extras).joinToString("  ·  "), 30, alpha = .82f)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(16.px), verticalAlignment = Alignment.CenterVertically) {
             // Show / hide the widgets (to see the wallpaper). ◀ stops here (the start of the top bar).
             GlassButton(onClick = actions.onToggleWidgets, Modifier.focusProperties { left = FocusRequester.Cancel }, radius = 999.dp) {
                 Glyph(if (widgetsHidden) Glyphs.EyeOff else Glyphs.Eye, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
             }
-            val current = weather.data?.current
-            GlassButton(onClick = actions.onOpenWeather, radius = 999.dp, focusScale = 1.08f) {
-                Row(
-                    Modifier.padding(horizontal = 26.px, vertical = 14.px),
-                    horizontalArrangement = Arrangement.spacedBy(14.px),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Glyph(current?.let { weatherGlyph(it.code, it.isDay) } ?: Glyphs.Cloud, 30)
-                    T(current?.let { deg(it.temp) } ?: "—°", 28, weight = 500)
-                    T(WeatherPlace.NAME, 24, alpha = .78f)
-                }
-            }
             GlassButton(onClick = { actions.onOpenSettings(Settings.ACTION_WIFI_SETTINGS) }, radius = 999.dp) {
                 Glyph(Glyphs.Wifi, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
             }
-            // Profile: opens Quick settings in phase 6; Android Settings for now.
             // Profile: OK opens Quick settings; hold OK goes straight to phone pairing.
             GlassButton(
                 onClick = actions.onOpenQuickSettings,

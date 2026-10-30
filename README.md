@@ -9,7 +9,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 ## What it does
 
 **Home**
-- Clock and date, a glass weather chip, and an eye button that hides or shows the widgets.
+- Clock, and the date with the current temperature and Indian AQI beside it. At top right: an eye button that hides or shows the widgets, Wi-Fi, and **M** (Quick settings).
 - Three widget spots, each set from the phone (Home tab › Home widgets) to one of:
   - **Weather:** temperature, today's high and low, and the next hours.
   - **Up next:** your next calendar events.
