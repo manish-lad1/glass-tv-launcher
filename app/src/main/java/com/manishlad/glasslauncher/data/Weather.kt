@@ -26,6 +26,11 @@ object WeatherPlace {
     const val LAT = 18.5204
     const val LON = 73.8567
     const val TZ = "Asia/Kolkata"
+
+    /** Air quality comes from the model cell over this area (≈10 km), closer to home than the city centre. */
+    const val AIR_NAME = "Baner"
+    const val AIR_LAT = 18.5590
+    const val AIR_LON = 73.7868
 }
 
 data class CurrentWeather(
@@ -51,7 +56,8 @@ data class DayForecast(
     val sunset: LocalDateTime,
 )
 
-data class AirSample(val time: LocalDateTime, val pm25: Double?, val pm10: Double?)
+/** One hour of air quality: PM concentrations (µg/m³) and Open-Meteo's US AQI for that hour. */
+data class AirSample(val time: LocalDateTime, val pm25: Double?, val pm10: Double?, val usAqi: Int? = null)
 
 data class WeatherData(
     val fetchedAt: Instant,
@@ -71,6 +77,13 @@ data class WeatherData(
     fun rainChanceNow(now: LocalDateTime) = hourly.firstOrNull { it.time == now.truncatedTo(ChronoUnit.HOURS) }?.rainChance
 
     fun indianAqi(now: LocalDateTime): IndianAqi.Reading? = IndianAqi.fromHourly(air, now)
+
+    /** US EPA AQI for the current hour (Open-Meteo computes it, incl. 24 h PM averages). */
+    fun usAqi(now: LocalDateTime): IndianAqi.Reading? {
+        val hour = now.truncatedTo(ChronoUnit.HOURS)
+        val v = air.lastOrNull { !it.time.isAfter(hour) && it.usAqi != null }?.usAqi ?: return null
+        return IndianAqi.Reading(v, UsAqi.category(v))
+    }
 }
 
 data class WeatherState(
@@ -137,8 +150,8 @@ class WeatherRepository(context: Context, private val http: OkHttpClient) {
         "&forecast_days=7"
 
     private fun airUrl() = "https://air-quality-api.open-meteo.com/v1/air-quality" +
-        "?latitude=${WeatherPlace.LAT}&longitude=${WeatherPlace.LON}&timezone=${WeatherPlace.TZ}" +
-        "&hourly=pm10,pm2_5&past_days=1&forecast_days=1"
+        "?latitude=${WeatherPlace.AIR_LAT}&longitude=${WeatherPlace.AIR_LON}&timezone=${WeatherPlace.TZ}" +
+        "&hourly=pm10,pm2_5,us_aqi&past_days=1&forecast_days=1"
 
     private fun parseCached(): WeatherData? {
         if (!forecastFile.exists()) return null
@@ -186,6 +199,7 @@ class WeatherRepository(context: Context, private val http: OkHttpClient) {
                     LocalDateTime.parse(aTime.getString(i)),
                     a.getJSONArray("pm2_5").optDoubleOrNull(i),
                     a.getJSONArray("pm10").optDoubleOrNull(i),
+                    a.optJSONArray("us_aqi")?.optIntOrNull(i),
                 )
             }
         } else emptyList()
@@ -243,6 +257,18 @@ object WeatherCodes {
  * Indian AQI (CPCB) from PM2.5 and PM10: 24-hour rolling means, sub-index by linear
  * interpolation within each band, AQI = max of the sub-indices. A model forecast, not a station reading.
  */
+/** US EPA AQI categories (the number itself comes from Open-Meteo). */
+object UsAqi {
+    fun category(aqi: Int) = when {
+        aqi <= 50 -> "Good"
+        aqi <= 100 -> "Moderate"
+        aqi <= 150 -> "Unhealthy for sensitive groups"
+        aqi <= 200 -> "Unhealthy"
+        aqi <= 300 -> "Very unhealthy"
+        else -> "Hazardous"
+    }
+}
+
 object IndianAqi {
     data class Reading(val value: Int, val category: String)
 

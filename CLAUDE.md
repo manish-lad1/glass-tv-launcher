@@ -21,7 +21,7 @@ You're setting up this repo's launcher as the home screen of the user's Android 
    - Below, `<TV>` means `<TV_IP>:5555`.
    - The first connection shows "Allow debugging?" on the TV. The user ticks "Always allow".
 2. **Personal values to change in code** (or keep the defaults):
-   - **Weather location:** `WeatherPlace` in `app/src/main/java/com/manishlad/glasslauncher/data/Weather.kt` (default Pune, 18.5204, 73.8567, Asia/Kolkata).
+   - **Weather location:** `WeatherPlace` in `app/src/main/java/com/manishlad/glasslauncher/data/Weather.kt` (default Pune, 18.5204, 73.8567, Asia/Kolkata). Air quality uses its own `AIR_NAME` / `AIR_LAT` / `AIR_LON` (default Baner) and shows the US AQI.
    - **Profile name and initial:** shown in Quick settings and on the top-bar button. In `ui/QuickSettings.kt` (`"Manish"`, `"M"`) and `ui/Home.kt` (`T("M", …)`).
    - **TV name shown on the phone page:** `"Living room TV"` in `companion/CompanionServer.kt`.
    - **Default dock apps:** `DEFAULT_DOCK` in `AppRepository.kt` (package names; missing apps are skipped). The user can change the dock later on the TV or the phone.
@@ -71,7 +71,7 @@ Run `./tv-check.sh` after setting `TV=` at its top. It writes `tv-report.txt`: m
 ./gradlew testReleaseUnitTest assembleRelease
 ```
 
-The tests cover the Indian AQI maths and ICS recurrence expansion. The APK is `app/build/outputs/apk/release/app-release.apk`, minified and signed with the debug key (fine for sideloading).
+The tests cover the AQI maths (an Indian AQI calculator kept in `data/Weather.kt`, not shown on screen), F1 parsing and ICS recurrence expansion. The APK is `app/build/outputs/apk/release/app-release.apk`, minified and signed with the debug key (fine for sideloading).
 
 ## 4. Install and run as a normal app first
 

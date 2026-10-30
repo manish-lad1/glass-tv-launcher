@@ -181,12 +181,12 @@ private fun TopBar(
                     T(now.format(DateTimeFormatter.ofPattern("a", Locale.ENGLISH)).uppercase(), 32, Modifier.alignByBaseline(), weight = 300, alpha = .8f)
                 }
             }
-            // Date, then the current temperature and Indian AQI (left out until weather data exists).
+            // Date, then the current temperature and US AQI (left out until data exists).
             val date = now.format(DateTimeFormatter.ofPattern("EEE, d MMM", Locale.ENGLISH))
             val w = weather.data
             val extras = listOfNotNull(
                 w?.current?.let { deg(it.temp) },
-                w?.indianAqi(now)?.let { "AQI ${it.value}" },
+                w?.usAqi(now)?.let { "AQI ${it.value}" },
             )
             FitWidthText((listOf(date) + extras).joinToString("  ·  "), clockWidth, baseSize = 30, alpha = .82f)
         }

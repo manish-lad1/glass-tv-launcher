@@ -9,7 +9,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 ## What it does
 
 **Home**
-- Clock, and the date with the current temperature and Indian AQI beside it. At top right: an eye button that hides or shows the widgets, Wi-Fi, and **M** (Quick settings).
+- Clock, and the date with the current temperature and US AQI beside it. At top right: an eye button that hides or shows the widgets, Wi-Fi, and **M** (Quick settings).
 - Three widget spots, each set from the phone (Home tab › Home widgets) to one of:
   - **Weather:** temperature, today's high and low, and the next hours.
   - **Up next:** your next calendar events.
@@ -20,7 +20,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 - D-pad navigation designed for a TV remote. Holding Back for 5 seconds always opens Android Settings, as a recovery route.
 
 **Widgets and full screens**
-- **Weather** from [Open-Meteo](https://open-meteo.com), with the Indian air-quality index (CPCB method, from 24-hour PM2.5/PM10 averages), a 12-hour strip and a 6-day forecast. It refreshes every 30 min and keeps showing cached data offline, labelled with its age.
+- **Weather** from [Open-Meteo](https://open-meteo.com), with the US air-quality index for the Baner area (Open-Meteo's model cell nearest Baner, set in `WeatherPlace.AIR_*`), a 12-hour strip and a 6-day forecast. It refreshes every 30 min and keeps showing cached data offline, labelled with its age.
 - **Calendars** from any ICS link: Apple iCloud public calendars or subscriptions such as a sports schedule. It handles repeating events, exceptions and time zones, and shows a week strip, the rest of today and each day's agenda.
 - **Now watching:** ◀ ▶ flip through titles, OK resumes and holding OK shows details.
 - **Formula 1** from the free [Jolpica F1 API](https://github.com/jolpica/jolpica-f1) (no key): the full screen shows the weekend's sessions in your time zone with countdowns, the last race's podium, and the driver and constructor standings. It refreshes hourly, every 15 min around a race weekend, and keeps showing cached data offline.
@@ -64,7 +64,7 @@ Taken on the TV (1920×1080) with the owner's own photo as the wallpaper. Calend
 | | |
 |---|---|
 | ![Home with the widgets hidden](docs/screenshots/home-wallpaper.png)<br>Home with the widgets hidden (eye button) | ![All apps](docs/screenshots/apps-tab.png)<br>All apps |
-| ![Weather](docs/screenshots/weather.png)<br>Weather, with the Indian AQI | ![Calendar](docs/screenshots/calendar.png)<br>Calendar |
+| ![Weather](docs/screenshots/weather.png)<br>Weather | ![Calendar](docs/screenshots/calendar.png)<br>Calendar |
 | ![Quick settings](docs/screenshots/quick-settings.png)<br>Quick settings: inputs and Wi-Fi | ![Quick settings, lower half](docs/screenshots/quick-settings-tv.png)<br>Quick settings: wallpapers and TV settings |
 | ![Dock editing](docs/screenshots/dock-edit.png)<br>Dock editing (hold OK on an app) | ![Ambient](docs/screenshots/ambient.png)<br>Ambient, after 3 minutes idle |
 
@@ -86,7 +86,7 @@ app/src/main/java/com/manishlad/glasslauncher/
   DevConfigReceiver.kt   adb-only config commands (calendars, watch list, wallpapers)
   DevImportProvider.kt   adb-only photo import (`content write`)
   companion/             Phone companion: HTTP server (NanoHTTPD), pairing and sessions
-  data/                  Weather + Indian AQI, ICS calendars, Now watching, dock, wallpapers,
+  data/                  Weather + air quality, ICS calendars, Now watching, dock, wallpapers,
                          TV inputs, Wi-Fi, per-app media record
   ui/                    Compose screens: Home, widgets, All apps, expanded screens,
                          Ambient, Quick settings, dock editor, pairing, glass components
@@ -163,6 +163,6 @@ These parts are specific to the TV it was built on and may need adjusting elsewh
 ## Credits
 
 - [Inter](https://rsms.me/inter/) typeface by Rasmus Andersson, bundled under the SIL Open Font License (see `third_party_inter_LICENSE.txt`).
-- Weather data by [Open-Meteo.com](https://open-meteo.com) (CC BY 4.0). Air quality is a model forecast converted to the Indian AQI scale.
+- Weather data by [Open-Meteo.com](https://open-meteo.com) (CC BY 4.0). Air quality (US AQI) is a model forecast, not a station reading.
 - Formula 1 data from the [Jolpica F1 API](https://github.com/jolpica/jolpica-f1) (Ergast-compatible).
 - biweekly, NanoHTTPD, ZXing, OkHttp and AndroidX under their respective licences.

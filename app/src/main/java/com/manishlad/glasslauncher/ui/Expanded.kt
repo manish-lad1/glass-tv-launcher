@@ -125,12 +125,16 @@ fun WeatherScreen(state: WeatherState) {
                     Spacer(Modifier.height(24.px))
                     Box(Modifier.fillMaxWidth().height(1.px).background(Color.White.copy(alpha = .16f)))
                     Spacer(Modifier.height(24.px))
-                    val aqi = data.indianAqi(now)
+                    val aqi = data.usAqi(now)
                     StatGrid(
                         listOf(
                             Stat("Humidity", "${c.humidity}%"),
                             Stat("Wind", "${c.windKmh.toInt()} km/h ${WeatherCodes.compass(c.windDegrees)}"),
-                            Stat("Air quality\n(Indian AQI)", aqi?.value?.toString() ?: "—", aqi?.category),
+                            Stat(
+                                "US AQI · ${WeatherPlace.AIR_NAME}",
+                                aqi?.value?.toString() ?: "—",
+                                aqi?.category,
+                            ),
                             Stat("Rain", data.rainChanceNow(now)?.let { "$it%" } ?: "—"),
                             Stat("Sunrise", today?.let { clockTime(it.sunrise, is24) } ?: "—"),
                             Stat("Sunset", today?.let { clockTime(it.sunset, is24) } ?: "—"),
@@ -138,7 +142,7 @@ fun WeatherScreen(state: WeatherState) {
                     )
                     Spacer(Modifier.weight(1f))
                     T(
-                        "Weather data by Open-Meteo.com (CC BY 4.0). Air quality is a model forecast, converted to the Indian AQI scale.",
+                        "Weather data by Open-Meteo.com (CC BY 4.0). AQI is a model forecast for the ${WeatherPlace.AIR_NAME} area.",
                         18, alpha = .72f, maxLines = 3, lineHeight = 26,
                     )
                 }
@@ -183,7 +187,7 @@ private fun StatGrid(stats: List<Stat>) {
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.px)) {
                         T(stat.label, 20, alpha = .75f, maxLines = 2)
                         T(stat.value, 30, weight = 500)
-                        stat.sub?.let { T(it, 22, weight = 500, alpha = .85f, maxLines = 2) }
+                        stat.sub?.let { T(it, 20, weight = 500, alpha = .85f, maxLines = 4, lineHeight = 26) }
                     }
                 }
             }
