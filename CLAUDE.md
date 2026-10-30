@@ -22,7 +22,7 @@ You're setting up this repo's launcher as the home screen of the user's Android 
    - The first connection shows "Allow debugging?" on the TV. The user ticks "Always allow".
 2. **Personal values to change in code** (or keep the defaults):
    - **Weather location:** `WeatherPlace` in `app/src/main/java/com/manishlad/glasslauncher/data/Weather.kt` (default Pune, 18.5204, 73.8567, Asia/Kolkata). Air quality uses its own `AIR_NAME` / `AIR_LAT` / `AIR_LON` (default Baner) and shows the US AQI.
-   - **Profile name and initial:** shown in Quick settings and on the top-bar button. In `ui/QuickSettings.kt` (`"Manish"`, `"M"`) and `ui/Home.kt` (`T("M", …)`).
+   - **Profile name and initial:** shown in the M panel and on the top-bar button. In `ui/QuickSettings.kt` (`"Manish"`, `"M"`) and `ui/Home.kt` (`T("M", …)`).
    - **TV name shown on the phone page:** `"Living room TV"` in `companion/CompanionServer.kt`.
    - **Default dock apps:** `DEFAULT_DOCK` in `AppRepository.kt` (package names; missing apps are skipped). The user can change the dock later on the TV or the phone.
 
@@ -130,7 +130,7 @@ If the first command printed other services, keep them: join them with `:` inste
   adb -s <TV> shell cmd notification allow_listener com.manishlad.glasslauncher/com.manishlad.glasslauncher.MediaWatcher
   ```
   The log shows `media watcher connected`. Have the user play something for 5 minutes, then check `logcat -s GlassLauncher` for `now watching in <package>` or `skipped: <reason>`.
-- **Wi-Fi list in Quick settings:** Android needs location access for Wi-Fi scans and even the connected network's name, and location services must be on (`settings get secure location_mode` ≠ 0).
+- **Wi-Fi list (Wi-Fi chip):** Android needs location access for Wi-Fi scans and even the connected network's name, and location services must be on (`settings get secure location_mode` ≠ 0).
   ```bash
   adb -s <TV> shell pm grant com.manishlad.glasslauncher android.permission.ACCESS_FINE_LOCATION
   ```
@@ -138,7 +138,7 @@ If the first command printed other services, keep them: join them with `:` inste
 ## 8. Configure
 
 The best route is the **phone companion**:
-1. On the TV, open Quick settings (OK on **M**) › **Pair a phone**.
+1. On the TV, press OK on **M** › **Pair a phone**.
 2. The user scans the QR code with their phone and taps **Pair**.
 3. On the phone page they add calendar links, watch-list titles and wallpapers, and arrange the dock.
 
@@ -172,7 +172,7 @@ The test settings reset when the launcher restarts.
 - **Home screen:** Home, reboot and a crash all land on the launcher, and holding Back for 5 s opens Android Settings.
 - **Widgets:** weather loads, calendars sync, and Now watching fills in.
 - **Ambient:** appears after 3 min idle and any key wakes it, with focus where it was. The screensaver starts after the TV's own timeout.
-- **Quick settings:** switching to an HDMI input works (have the user try it; it changes what's on screen).
+- **Inputs chip:** switching to an HDMI input works (have the user try it; it changes what's on screen).
 - **Dock and remote:** dock editing (hold OK on a dock app) works, and the remote's app buttons open their apps.
 - **Memory:** check `dumpsys meminfo com.manishlad.glasslauncher` (about 100 MB PSS on Home is normal).
 

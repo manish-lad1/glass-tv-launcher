@@ -35,6 +35,9 @@ private val LAST_DOCK_APP = stringPreferencesKey("last_dock_app")
 private val WIDGETS_HIDDEN = booleanPreferencesKey("widgets_hidden")
 private val LAST_INPUT = stringPreferencesKey("last_input")
 
+/** Panels that slide in from the right, one per top-bar chip. Quick = the "M" chip. */
+enum class Panel { Inputs, Wallpapers, Wifi, Quick }
+
 enum class Screen { Home, AllApps, Weather, Calendar, Watching, Pairing, DockEdit, F1 }
 
 class LauncherViewModel(app: Application) : AndroidViewModel(app) {
@@ -155,7 +158,7 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     /** Home, or returning from an app: close everything and focus the dock. */
     fun returnHome() {
         if (screen == Screen.Pairing) glass.pairing.cancel()
-        quickSettingsOpen = false
+        panel = null
         allAppsAddMode = false
         editMoving = false
         screen = Screen.Home
@@ -193,8 +196,10 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
 
     // ---- Quick settings ----
 
-    var quickSettingsOpen by mutableStateOf(false)
+    /** The open top-bar panel, if any. */
+    var panel by mutableStateOf<Panel?>(null)
         private set
+    val quickSettingsOpen get() = panel != null
     var inputs by mutableStateOf<List<TvSource>>(emptyList())
         private set
     /** Android won't say which input is on screen; this is the last one switched to from here. */
@@ -204,14 +209,18 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
         private set
     var wallpaperThumbs by mutableStateOf<List<Pair<WallpaperInfo, ImageBitmap>>>(emptyList())
         private set
-    /** Bumped when focus should return to the profile ("M") button. */
-    var profileFocusRequest by mutableIntStateOf(0)
+    /** Bumped (with [chipFocusTarget]) when focus should return to the chip that opened a panel. */
+    var chipFocusRequest by mutableIntStateOf(0)
+        private set
+    var chipFocusTarget by mutableStateOf(Panel.Quick)
         private set
     private val thumbCache = HashMap<String, ImageBitmap>()
 
-    fun openQuickSettings() {
+    fun openQuickSettings() = openPanel(Panel.Quick)
+
+    fun openPanel(kind: Panel) {
         screen = Screen.Home
-        quickSettingsOpen = true
+        panel = kind
         val app = getApplication<Application>()
         viewModelScope.launch {
             inputs = withContext(Dispatchers.IO) { TvSources.load(app) }
@@ -232,14 +241,15 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun closeQuickSettings() {
-        if (!quickSettingsOpen) return
-        quickSettingsOpen = false
-        profileFocusRequest++
+        val was = panel ?: return
+        panel = null
+        chipFocusTarget = was
+        chipFocusRequest++
     }
 
     fun onInputSwitched(source: TvSource) {
         lastInputId = source.id
-        quickSettingsOpen = false
+        panel = null
         viewModelScope.launch { getApplication<Application>().dataStore.edit { it[LAST_INPUT] = source.id } }
     }
 

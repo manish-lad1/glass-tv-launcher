@@ -9,7 +9,7 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
 ## What it does
 
 **Home**
-- Clock, and the date with the current temperature and US AQI beside it. At top right: an eye button that hides or shows the widgets, Wi-Fi, and **M** (Quick settings).
+- Clock, and the date with the current temperature and US AQI beside it. At top right, a row of chips: an eye button that hides or shows the widgets, then **Inputs**, **Wallpapers**, **Wi-Fi** and **M**, each opening its own panel.
 - Three widget spots, each set from the phone (Home tab › Home widgets) to one of:
   - **Weather:** temperature, today's high and low, and the next hours.
   - **Up next:** your next calendar events.
@@ -35,12 +35,11 @@ It was built for one TV, a VU (Hisense-made) Android TV 11 at 1920×1080, and it
   - a "Resume" shortcut
 - The same Ambient screen also serves as the system screensaver.
 
-**Quick settings** (OK on **M**, or the remote's Settings button)
-- **Inputs:** switch between HDMI 1–3, AV and Antenna.
-- **Wi-Fi:** nearby networks, with yours first.
-- **Wallpapers:** pick Home's wallpaper.
-- **TV settings:** shortcuts to the TV's own Picture, Sound and Sleep-timer menus.
-- **Pair a phone.**
+**Top-bar panels** (each slides in from the right; Back closes it and returns focus to its chip)
+- **Inputs chip:** switch between HDMI 1–3, AV and Antenna.
+- **Wallpapers chip:** pick Home's wallpaper.
+- **Wi-Fi chip:** nearby networks, with yours first; choosing one opens the TV's Wi-Fi settings.
+- **M** (also the remote's Settings button): shortcuts to the TV's own Picture, Sound and Sleep-timer menus, All settings, and **Pair a phone**.
 
 **Dock editing**
 - Hold OK on a dock app to rearrange or remove apps. The tiles wiggle; ◀ ▶ move an app, ▼ removes it.
@@ -124,13 +123,14 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 | Dock | OK / hold OK | Open the app / edit the dock |
 | Weather, Up next, Formula 1 | OK | Full screen |
 | Now watching | ◀ ▶ / OK / hold OK | Flip / resume / details |
-| M (top right) | OK / hold OK | Quick settings / pair a phone |
+| Inputs / Wallpapers / Wi-Fi chips | OK | Open that panel |
+| M (top right) | OK / hold OK | TV settings panel / pair a phone |
 | Eye (top right) | OK | Hide or show the widgets |
 | All apps | OK / hold OK | Open the app / add it to the dock |
 | Anywhere | Back / hold Back 5 s | Back to the dock / Android Settings |
 | Ambient | OK / any key | Resume the show / wake |
 
-**Phone companion:** on the TV, go to Quick settings › Pair a phone, then scan the QR with your phone. The page works on any phone browser on the same Wi-Fi, at **`http://glass-tv.local:8080`**. The TV announces that name itself (mDNS), so it keeps working when the router gives the TV a new IP address, and so does your phone's pairing. `http://<TV_IP>:8080` also works, but pairing done at an IP is lost if the IP changes.
+**Phone companion:** on the TV, press OK on **M** › Pair a phone, then scan the QR with your phone. The page works on any phone browser on the same Wi-Fi, at **`http://glass-tv.local:8080`**. The TV announces that name itself (mDNS), so it keeps working when the router gives the TV a new IP address, and so does your phone's pairing. `http://<TV_IP>:8080` also works, but pairing done at an IP is lost if the IP changes.
 
 ## Privacy and security
 
@@ -146,7 +146,7 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 
 - **Netflix** doesn't share what's playing, so Netflix titles must be added from the phone. **JioHotstar** shares titles but no artwork.
 - **Finished titles disappear:** automatically added titles are removed once 95% watched.
-- **Current input unknown:** Android doesn't tell apps which input is on screen. Quick settings marks the last input picked there.
+- **Current input unknown:** Android doesn't tell apps which input is on screen. The Inputs panel marks the last input picked there.
 - **Wi-Fi switching:** apps can't switch Wi-Fi networks (Android 10+), so choosing a network opens the TV's Wi-Fi settings.
 - **Fixed personal values:** the weather location (Pune), the profile name and the TV name are set in code; [CLAUDE.md](CLAUDE.md) lists where.
 - **Memory:** about 100 MB PSS on Home and ~150 MB during the Ambient slideshow.

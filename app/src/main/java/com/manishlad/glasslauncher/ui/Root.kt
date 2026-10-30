@@ -65,6 +65,7 @@ fun LauncherRoot(
                             onOpenF1 = { vm.openWidget(Screen.F1) },
                             onOpenPairing = vm::openPairing,
                             onOpenQuickSettings = vm::openQuickSettings,
+                            onOpenPanel = vm::openPanel,
                             onEditDock = vm::startDockEdit,
                             onResume = onResume,
                             onWatchingIndex = { vm.watchingIndex = it },
@@ -72,10 +73,12 @@ fun LauncherRoot(
                         ),
                         focusRequest = vm.homeFocusRequest,
                         returnToWidget = vm.returnToWidget,
-                        profileFocusRequest = vm.profileFocusRequest,
+                        chipFocusRequest = vm.chipFocusRequest,
+                        chipFocusTarget = vm.chipFocusTarget,
                     )
-                    if (vm.quickSettingsOpen) {
+                    vm.panel?.let { kind ->
                         QuickSettingsPanel(
+                            kind = kind,
                             inputs = vm.inputs,
                             lastInputId = vm.lastInputId,
                             wifi = vm.wifi,

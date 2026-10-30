@@ -45,6 +45,7 @@ import androidx.compose.runtime.key
 import com.manishlad.glasslauncher.data.F1State
 import com.manishlad.glasslauncher.data.WidgetKind
 import com.manishlad.glasslauncher.LaunchableApp
+import com.manishlad.glasslauncher.Panel
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.ui.graphics.graphicsLayer
@@ -81,6 +82,7 @@ class HomeActions(
     val onOpenF1: () -> Unit,
     val onOpenPairing: () -> Unit,
     val onOpenQuickSettings: () -> Unit,
+    val onOpenPanel: (Panel) -> Unit,
     val onEditDock: (String) -> Unit,
     val onResume: (WatchItem) -> Unit,
     val onWatchingIndex: (Int) -> Unit,
@@ -88,9 +90,17 @@ class HomeActions(
 )
 
 @Composable
-fun HomeScreen(data: HomeData, actions: HomeActions, focusRequest: Int, returnToWidget: Int?, profileFocusRequest: Int) {
-    val profile = remember { FocusRequester() }
-    LaunchedEffect(profileFocusRequest) { if (profileFocusRequest > 0) runCatching { profile.requestFocus() } }
+fun HomeScreen(
+    data: HomeData,
+    actions: HomeActions,
+    focusRequest: Int,
+    returnToWidget: Int?,
+    chipFocusRequest: Int,
+    chipFocusTarget: Panel,
+) {
+    // One requester per top-bar chip, so closing a panel puts focus back on the chip that opened it.
+    val chips = remember { Panel.entries.associateWith { FocusRequester() } }
+    LaunchedEffect(chipFocusRequest) { if (chipFocusRequest > 0) runCatching { chips.getValue(chipFocusTarget).requestFocus() } }
     val widgets = remember { WidgetSlots() }
     widgets.hidden = data.widgetsHidden
     LaunchedEffect(focusRequest) {
@@ -102,7 +112,7 @@ fun HomeScreen(data: HomeData, actions: HomeActions, focusRequest: Int, returnTo
         Modifier.fillMaxSize().padding(horizontal = 120.px, vertical = 72.px),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        TopBar(data.weather, data.widgetsHidden, actions, profile)
+        TopBar(data.weather, data.widgetsHidden, actions, chips)
         // Hidden widgets keep their space, so the dock doesn't move and the wallpaper shows through.
         Box(Modifier.fillMaxWidth().height(304.px)) {
             androidx.compose.animation.AnimatedVisibility(visible = !data.widgetsHidden, enter = fadeIn(tween(300)), exit = fadeOut(tween(300))) {
@@ -156,14 +166,21 @@ fun weatherAge(state: WeatherState, now: Instant = Instant.now(), long: Boolean 
         else "Offline · ${age.removeSuffix(" ago")}"
 }
 
-// ---- Top bar: clock + date, weather chip, Wi-Fi, profile -------------------------------
+// ---- Top bar: clock + date; chips: eye, inputs, wallpapers, Wi-Fi, profile ---------------
+
+@Composable
+private fun ChipButton(icon: androidx.compose.ui.graphics.vector.ImageVector, requester: FocusRequester, onClick: () -> Unit) {
+    GlassButton(onClick = onClick, focusRequester = requester, radius = 999.dp) {
+        Glyph(icon, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
+    }
+}
 
 @Composable
 private fun TopBar(
     weather: WeatherState,
     widgetsHidden: Boolean,
     actions: HomeActions,
-    profile: FocusRequester,
+    chips: Map<Panel, FocusRequester>,
 ) {
     val now by rememberNow()
     val is24 = is24Hour()
@@ -195,13 +212,14 @@ private fun TopBar(
             GlassButton(onClick = actions.onToggleWidgets, Modifier.focusProperties { left = FocusRequester.Cancel }, radius = 999.dp) {
                 Glyph(if (widgetsHidden) Glyphs.EyeOff else Glyphs.Eye, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
             }
-            GlassButton(onClick = { actions.onOpenSettings(Settings.ACTION_WIFI_SETTINGS) }, radius = 999.dp) {
-                Glyph(Glyphs.Wifi, 28, Modifier.padding(horizontal = 18.px, vertical = 14.px))
-            }
+            // Inputs, wallpapers and Wi-Fi each open their own panel (sections that used to live under M).
+            ChipButton(Glyphs.Input, chips.getValue(Panel.Inputs)) { actions.onOpenPanel(Panel.Inputs) }
+            ChipButton(Glyphs.Picture, chips.getValue(Panel.Wallpapers)) { actions.onOpenPanel(Panel.Wallpapers) }
+            ChipButton(Glyphs.Wifi, chips.getValue(Panel.Wifi)) { actions.onOpenPanel(Panel.Wifi) }
             // Profile: OK opens Quick settings; hold OK goes straight to phone pairing.
             GlassButton(
                 onClick = actions.onOpenQuickSettings,
-                focusRequester = profile,
+                focusRequester = chips.getValue(Panel.Quick),
                 modifier = Modifier.size(64.px).focusProperties { right = FocusRequester.Cancel },
                 onLongClick = actions.onOpenPairing,
                 radius = 999.dp,
