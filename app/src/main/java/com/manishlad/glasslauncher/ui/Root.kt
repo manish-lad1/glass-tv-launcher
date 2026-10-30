@@ -80,7 +80,6 @@ fun LauncherRoot(
                         QuickSettingsPanel(
                             kind = kind,
                             inputs = vm.inputs,
-                            lastInputId = vm.lastInputId,
                             wifi = vm.wifi,
                             wallpapers = vm.wallpaperThumbs,
                             homeWallpaperId = vm.homeSlide?.info?.id,

@@ -146,7 +146,7 @@ Use the release build: Compose debug builds are noticeably slow on TV hardware.
 
 - **Netflix** doesn't share what's playing, so Netflix titles must be added from the phone. **JioHotstar** shares titles but no artwork.
 - **Finished titles disappear:** automatically added titles are removed once 95% watched.
-- **Current input unknown:** Android doesn't tell apps which input is on screen. The Inputs panel marks the last input picked there.
+- **Current input unknown:** Android doesn't tell apps which input is on screen, so the Inputs panel doesn't mark one.
 - **Wi-Fi switching:** apps can't switch Wi-Fi networks (Android 10+), so choosing a network opens the TV's Wi-Fi settings.
 - **Fixed personal values:** the weather location (Pune), the profile name and the TV name are set in code; [CLAUDE.md](CLAUDE.md) lists where.
 - **Memory:** about 100 MB PSS on Home and ~150 MB during the Ambient slideshow.

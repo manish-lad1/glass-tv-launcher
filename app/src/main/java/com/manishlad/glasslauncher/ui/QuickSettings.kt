@@ -71,7 +71,6 @@ private val Ink = Color(0xFF16132E)
 fun QuickSettingsPanel(
     kind: Panel,
     inputs: List<TvSource>,
-    lastInputId: String?,
     wifi: WifiSnapshot?,
     wallpapers: List<Pair<WallpaperInfo, androidx.compose.ui.graphics.ImageBitmap>>,
     homeWallpaperId: String?,
@@ -111,14 +110,11 @@ fun QuickSettingsPanel(
                 when (kind) {
                     Panel.Inputs -> {
                         PanelTitle(Glyphs.Input, "Inputs", "Switch what the TV shows")
-                        // One row per input, like the Wi-Fi list. Android won't say which input is on
-                        // screen, so the ✓ marks the last one switched to from here.
+                        // One row per input, like the Wi-Fi list. No "current" mark: Android doesn't tell
+                        // apps which input is on screen.
                         Column(verticalArrangement = Arrangement.spacedBy(10.px)) {
-                            InputRow(Glyphs.Home, "Home", "Stay on the launcher", checked = false, Modifier.focusRequester(first)) { actions.onInput(null) }
-                            for (src in inputs) {
-                                val last = src.id == lastInputId
-                                InputRow(Glyphs.Input, src.label, if (last) "Last used" else null, checked = last) { actions.onInput(src) }
-                            }
+                            InputRow(Glyphs.Home, "Home", "Stay on the launcher", Modifier.focusRequester(first)) { actions.onInput(null) }
+                            for (src in inputs) InputRow(Glyphs.Input, src.label, null) { actions.onInput(src) }
                         }
                     }
                     Panel.Wallpapers -> {
@@ -178,17 +174,16 @@ fun QuickSettingsPanel(
     }
 }
 
-/** A full-width input row: icon, name, optional note, ✓ for the last-used input. */
+/** A full-width input row: icon, name, optional note. */
 @Composable
-private fun InputRow(icon: ImageVector, label: String, note: String?, checked: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun InputRow(icon: ImageVector, label: String, note: String?, modifier: Modifier = Modifier, onClick: () -> Unit) {
     GlassButton(onClick = onClick, modifier = modifier.fillMaxWidth(), radius = 18.px, focusScale = 1.03f, contentAlignment = Alignment.CenterStart) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 22.px, vertical = 14.px), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.px)) {
             Glyph(icon, 26)
             Column(Modifier.weight(1f)) {
-                T(label, 24, weight = if (checked) 600 else 400)
+                T(label, 24)
                 if (note != null) T(note, 18, alpha = .78f)
             }
-            if (checked) Glyph(Glyphs.Check, 26)
         }
     }
 }

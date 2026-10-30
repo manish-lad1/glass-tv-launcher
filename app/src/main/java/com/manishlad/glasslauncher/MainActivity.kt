@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
         try {
             if (intent == null) throw ActivityNotFoundException()
             startActivity(intent)
-            vm.onInputSwitched(source)
+            vm.onInputSwitched()
         } catch (e: ActivityNotFoundException) {
             Log.w(TAG, "No app handles input ${source.label}")
         }

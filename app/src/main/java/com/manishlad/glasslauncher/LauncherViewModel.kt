@@ -33,7 +33,6 @@ import kotlinx.coroutines.withContext
 private val Context.dataStore by preferencesDataStore("launcher")
 private val LAST_DOCK_APP = stringPreferencesKey("last_dock_app")
 private val WIDGETS_HIDDEN = booleanPreferencesKey("widgets_hidden")
-private val LAST_INPUT = stringPreferencesKey("last_input")
 
 /** Panels that slide in from the right, one per top-bar chip. Quick = the "M" chip. */
 enum class Panel { Inputs, Wallpapers, Wifi, Quick }
@@ -83,7 +82,6 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
             val prefs = app.dataStore.data.first()
             lastDockApp = prefs[LAST_DOCK_APP]
             widgetsHidden = prefs[WIDGETS_HIDDEN] ?: false
-            lastInputId = prefs[LAST_INPUT]
         }
     }
 
@@ -202,9 +200,6 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     val quickSettingsOpen get() = panel != null
     var inputs by mutableStateOf<List<TvSource>>(emptyList())
         private set
-    /** Android won't say which input is on screen; this is the last one switched to from here. */
-    var lastInputId by mutableStateOf<String?>(null)
-        private set
     var wifi by mutableStateOf<WifiSnapshot?>(null)
         private set
     var wallpaperThumbs by mutableStateOf<List<Pair<WallpaperInfo, ImageBitmap>>>(emptyList())
@@ -247,10 +242,9 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
         chipFocusRequest++
     }
 
-    fun onInputSwitched(source: TvSource) {
-        lastInputId = source.id
+    /** An input was switched to: close the panel (the TV's own input screen is now in front). */
+    fun onInputSwitched() {
         panel = null
-        viewModelScope.launch { getApplication<Application>().dataStore.edit { it[LAST_INPUT] = source.id } }
     }
 
     val wallpaperMode get() = glass.wallpapers.mode.value
