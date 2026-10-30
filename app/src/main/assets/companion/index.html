@@ -333,7 +333,7 @@ function renderDock() {
   const others = S.apps.filter((a) => !dock.includes(a.package));
   const pick = h("select", { class: "in" }, others.map((a) => h("option", { value: a.package }, a.label)));
   const full = dock.length >= S.dockMax;
-  const slotNames = ["Left", "Middle", "Right (wide)"];
+  const slotNames = ["Left", "Middle", "Right"];
   const widgetsCard = h("div", { class: "card pad" },
     h("h2", {}, "Home widgets"),
     h("p", { class: "help" }, "Choose what shows in each of the three spots on the TV's Home screen. Picking a widget that's already in another spot swaps the two."),

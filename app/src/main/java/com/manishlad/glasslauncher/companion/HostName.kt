@@ -20,6 +20,8 @@ const val HOST_DOMAIN = "$HOST_NAME.local"
 private const val MDNS_PORT = 5353
 private val MDNS_GROUP: InetAddress = InetAddress.getByName("224.0.0.251")
 private const val TYPE_A = 1
+private const val TYPE_AAAA = 28
+private const val TYPE_NSEC = 47
 private const val TYPE_ANY = 255
 
 /**
@@ -81,8 +83,11 @@ class HostNameResponder(context: Context) {
             } catch (e: Exception) {
                 return // closed
             }
+            // Answer A, AAAA and ANY for our name. Phones and Macs ask for IPv4 and IPv6 together;
+            // leaving AAAA unanswered made every lookup wait ~5 s, so the reply also carries an NSEC
+            // record saying the name has no IPv6 address.
             val q = parseQuery(p.data, p.length) ?: continue
-            if (!q.name.equals(HOST_DOMAIN, ignoreCase = true) || (q.type != TYPE_A && q.type != TYPE_ANY)) continue
+            if (!q.name.equals(HOST_DOMAIN, ignoreCase = true) || q.type !in setOf(TYPE_A, TYPE_AAAA, TYPE_ANY)) continue
             val now = System.currentTimeMillis()
             if (now - lastAnswerLog > 60_000) {
                 lastAnswerLog = now
@@ -104,43 +109,81 @@ class HostNameResponder(context: Context) {
 
     private class Query(val id: Int, val name: String, val type: Int, val unicastResponse: Boolean, val raw: ByteArray)
 
-    /** First question of a DNS query (responses are ignored). */
+    /**
+     * The first question in a DNS query that asks about our name (A/AAAA/ANY), or the first
+     * question if none does. Handles name compression, which later questions often use.
+     */
     private fun parseQuery(d: ByteArray, len: Int): Query? {
         if (len < 12) return null
         val flags = u16(d, 2)
         if (flags and 0x8000 != 0) return null // a response, not a query
-        if (u16(d, 4) < 1) return null
+        val count = u16(d, 4)
         var i = 12
-        val labels = ArrayList<String>()
-        while (i < len) {
-            val l = d[i].toInt() and 0xFF
-            if (l == 0) { i++; break }
-            if (l and 0xC0 != 0) return null // compression isn't used in the first question name
-            if (i + 1 + l > len) return null
-            labels += String(d, i + 1, l, Charsets.UTF_8)
-            i += 1 + l
+        var first: Query? = null
+        repeat(count) {
+            val start = i
+            val (name, next) = readName(d, len, i) ?: return first
+            i = next
+            if (i + 4 > len) return first
+            val q = Query(u16(d, 0), name, u16(d, i), u16(d, i + 2) and 0x8000 != 0,
+                // Echoed only for legacy one-shot queries; compressed names can't be echoed alone.
+                if (start == 12) d.copyOfRange(12, i + 4) else ByteArray(0))
+            i += 4
+            if (first == null) first = q
+            if (q.name.equals(HOST_DOMAIN, ignoreCase = true) && q.type in setOf(TYPE_A, TYPE_AAAA, TYPE_ANY)) return q
         }
-        if (i + 4 > len) return null
-        val qtype = u16(d, i)
-        val qclass = u16(d, i + 2)
-        return Query(u16(d, 0), labels.joinToString("."), qtype, qclass and 0x8000 != 0, d.copyOfRange(12, i + 4))
+        return first
     }
 
-    /** Authoritative response with one A record (cache-flush, TTL 120 s), optionally echoing a question. */
+    /** Reads a (possibly compressed) DNS name at [start]; returns the name and the offset after it. */
+    private fun readName(d: ByteArray, len: Int, start: Int): Pair<String, Int>? {
+        val labels = ArrayList<String>()
+        var i = start
+        var end = -1
+        var jumps = 0
+        while (i < len) {
+            val l = d[i].toInt() and 0xFF
+            when {
+                l == 0 -> { if (end < 0) end = i + 1; return labels.joinToString(".") to end }
+                l and 0xC0 == 0xC0 -> {
+                    if (i + 1 >= len || ++jumps > 10) return null
+                    if (end < 0) end = i + 2
+                    i = ((l and 0x3F) shl 8) or (d[i + 1].toInt() and 0xFF)
+                }
+                else -> {
+                    if (i + 1 + l > len) return null
+                    labels += String(d, i + 1, l, Charsets.UTF_8)
+                    i += 1 + l
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Authoritative response: an A record in Answers plus an NSEC record in Additional saying the
+     * name has only an A record (so IPv6 lookups end at once). Cache-flush, TTL 120 s.
+     */
     private fun answer(ip: Inet4Address, id: Int, question: ByteArray?): ByteArray {
+        val echo = question?.takeIf { it.isNotEmpty() }
         val out = ByteArrayOutputStream()
         fun w16(v: Int) { out.write(v shr 8 and 0xFF); out.write(v and 0xFF) }
-        w16(id); w16(0x8400); w16(if (question != null) 1 else 0); w16(1); w16(0); w16(0)
-        question?.let { out.write(it) }
-        for (label in HOST_DOMAIN.split('.')) {
-            val b = label.toByteArray(Charsets.UTF_8)
-            out.write(b.size); out.write(b)
+        fun name() {
+            for (label in HOST_DOMAIN.split('.')) {
+                val b = label.toByteArray(Charsets.UTF_8)
+                out.write(b.size); out.write(b)
+            }
+            out.write(0)
         }
-        out.write(0)
-        w16(TYPE_A)
-        w16(if (question != null) 0x0001 else 0x8001) // class IN (+ cache flush on multicast)
-        w16(0); w16(120) // TTL
-        w16(4); out.write(ip.address)
+        val cls = if (question != null) 0x0001 else 0x8001 // class IN (+ cache flush on multicast)
+        w16(id); w16(0x8400); w16(if (echo != null) 1 else 0); w16(1); w16(0); w16(1)
+        echo?.let { out.write(it) }
+        // A record
+        name(); w16(TYPE_A); w16(cls); w16(0); w16(120); w16(4); out.write(ip.address)
+        // NSEC: next name = our name; type bitmap window 0, 1 byte, bit for type 1 (A) = 0x40
+        name(); w16(TYPE_NSEC); w16(cls); w16(0); w16(120)
+        val nameLen = HOST_DOMAIN.split('.').sumOf { it.length + 1 } + 1
+        w16(nameLen + 3); name(); out.write(0); out.write(1); out.write(0x40)
         return out.toByteArray()
     }
 
