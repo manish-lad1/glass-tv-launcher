@@ -76,9 +76,9 @@ fun NowWatchingStack(
             .onKeyEvent { e ->
                 if (e.type != KeyEventType.KeyDown) return@onKeyEvent false
                 when (e.key) {
-                    // ◀ at the first item lets focus move on to the widget on the left.
+                    // At the first / last item, ◀ / ▶ let focus move on to the neighbouring widget.
                     Key.DirectionLeft -> if (front > 0) { onIndex(front - 1); true } else false
-                    Key.DirectionRight -> { if (front < items.size - 1) onIndex(front + 1); true }
+                    Key.DirectionRight -> if (front < items.size - 1) { onIndex(front + 1); true } else false
                     else -> false
                 }
             }
