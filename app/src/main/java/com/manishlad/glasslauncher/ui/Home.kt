@@ -179,7 +179,7 @@ private fun TopBar(
                 }
             }
             // Date, then the current temperature and Indian AQI (left out until weather data exists).
-            val date = now.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.ENGLISH))
+            val date = now.format(DateTimeFormatter.ofPattern("EEE, d MMM", Locale.ENGLISH))
             val w = weather.data
             val extras = listOfNotNull(
                 w?.current?.let { deg(it.temp) },
